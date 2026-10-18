@@ -32,10 +32,14 @@ import { validarEmail, validarPassword } from '../utils/validaciones.js'
    Asi no reganamos a nadie por la primera letra, pero el
    error desaparece en cuanto se corrige. */
 
-/* Por que se llego aqui. Viaja en la URL: /login?motivo=... */
+/* Por que se llego aqui. Viaja en la URL: /login?motivo=...
+
+   Solo hay motivos para quien NO tiene sesion: si la tuviera,
+   el redirect de mas abajo lo sacaria de esta pagina antes de
+   poder leer nada. Por eso el caso "no tienes permiso" lo
+   explica RutaProtegida en su propia pantalla, y no aqui. */
 const MOTIVOS = {
   'entra-primero': 'Inicia sesion para continuar.',
-  'sin-permiso': 'Tu cuenta no tiene permisos para entrar ahi.',
   'compra': 'Inicia sesion para terminar tu compra.',
 }
 

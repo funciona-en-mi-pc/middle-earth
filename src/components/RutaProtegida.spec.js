@@ -32,6 +32,7 @@ function dibujar(ruta, tipo) {
 
 const entre = () => screen.queryByText('Entre a la pagina secreta') !== null
 const rebotado = () => screen.queryByText('Me mandaron al login') !== null
+const sinPermiso = () => screen.queryByText('Esta puerta no es para ti') !== null
 
 describe('RutaProtegida', () => {
   beforeEach(() => {
@@ -73,11 +74,20 @@ describe('RutaProtegida', () => {
 
     /* En el SQL, VENTA.jugador_id es NOT NULL: el carrito y
        los pedidos son cosa de jugadores. */
-    it('rebota al mercader', () => {
+    it('para al mercader y se lo explica', () => {
       iniciarSesion('elrond@rivendel.me', 'elrond123')
       dibujar('/secreta', 'JUGADOR')
+
       expect(entre()).toBe(false)
-      expect(rebotado()).toBe(true)
+      expect(sinPermiso()).toBe(true)
+      expect(screen.getByText(/solo para jugadores/)).toBeTruthy()
+    })
+
+    /* No lo manda al login: ahi el mensaje no se veria */
+    it('no lo rebota al login', () => {
+      iniciarSesion('elrond@rivendel.me', 'elrond123')
+      dibujar('/secreta', 'JUGADOR')
+      expect(rebotado()).toBe(false)
     })
   })
 
@@ -89,11 +99,26 @@ describe('RutaProtegida', () => {
     })
 
     /* Es lo que hacia exigirAdministrador() en el mockup */
-    it('rebota al jugador que escribe /admin en la URL', () => {
+    it('para al jugador que escribe /admin en la URL', () => {
       iniciarSesion('aragorn@gondor.me', 'aragorn123')
       dibujar('/secreta', 'MERCADER')
+
       expect(entre()).toBe(false)
-      expect(rebotado()).toBe(true)
+      expect(sinPermiso()).toBe(true)
+      expect(screen.getByText(/solo para mercaderes/)).toBeTruthy()
+    })
+
+    /* Y le ofrece la salida que si le corresponde */
+    it('le ofrece volver a la tienda', () => {
+      iniciarSesion('aragorn@gondor.me', 'aragorn123')
+      dibujar('/secreta', 'MERCADER')
+      expect(screen.getByText('Volver a la tienda').getAttribute('href')).toBe('/')
+    })
+
+    it('al mercader le ofrece volver al panel', () => {
+      iniciarSesion('elrond@rivendel.me', 'elrond123')
+      dibujar('/secreta', 'JUGADOR')
+      expect(screen.getByText('Volver a el panel').getAttribute('href')).toBe('/admin')
     })
 
     /* VENDEDOR y HERRERO entran al panel; lo que no pueden es
