@@ -122,7 +122,17 @@ module.exports = function (config) {
        con llaves, la libreria glob de Karma 6 no devuelve la
        fecha de todos los archivos y la ejecucion se cae con
        "Cannot read properties of undefined (reading 'mtime')". */
-    files: [{ pattern: 'src/**/*.spec.js', watched: false }],
+    files: [
+      { pattern: 'src/**/*.spec.js', watched: false },
+      /* Las imagenes de public/ se sirven, pero no se incluyen
+         como scripts. Sin esto, cada ficha dibujada en una
+         prueba deja un 404 en la consola. */
+      { pattern: 'public/img/**/*', watched: false, included: false, served: true, nocache: true },
+    ],
+
+    /* En la pagina las imagenes son /img/..., pero Karma sirve
+       todo bajo /base/. Este proxy une las dos cosas. */
+    proxies: { '/img/': '/base/public/img/' },
 
     preprocessors: { 'src/**/*.spec.js': ['esbuild'] },
 

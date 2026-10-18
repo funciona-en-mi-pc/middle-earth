@@ -64,3 +64,73 @@ a.kpi:hover{
   background:rgba(var(--acento-rgb),0.07);
 }
 a.kpi .n{ font-size:1.25rem; }
+
+
+/* =========================================================
+   DETALLE DEL PRODUCTO  (tarea #21)
+   ========================================================= */
+.migas{
+  margin:28px 0 0;
+  font-size:0.62rem;
+  color:var(--marfil-tenue);
+}
+.migas a{ color:var(--acento); }
+
+.detalle{ padding:clamp(24px,4vw,46px) 0 clamp(50px,7vw,90px); }
+
+.detalle-marco{
+  border:1px solid var(--borde);
+  border-radius:var(--radio);
+  overflow:hidden;
+  box-shadow:var(--sombra);
+}
+.detalle-marco img{
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+}
+
+.detalle-precio{
+  display:flex; align-items:center; gap:10px;
+  margin:18px 0 26px;
+  font-size:1.6rem;
+  font-weight:600;
+  color:var(--oro-claro);
+  font-variant-numeric:tabular-nums;
+}
+
+/* Las tres fichas de datos: nivel, stock y estado */
+.detalle-datos{
+  display:flex; flex-wrap:wrap; gap:14px;
+  margin:0 0 26px;
+}
+.detalle-datos > div{
+  flex:1 1 140px;
+  padding:14px 16px;
+  background:var(--hierro);
+  border:1px solid var(--borde);
+  border-left:3px solid var(--acento);
+  border-radius:var(--radio);
+}
+.detalle-datos dt{
+  font-family:var(--fuente-titulo);
+  font-size:0.56rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--marfil-tenue);
+  font-weight:400;
+}
+.detalle-datos dd{
+  margin:6px 0 0;
+  font-size:1.15rem;
+  color:var(--marfil);
+  font-variant-numeric:tabular-nums;
+}
+
+/* El desplegable de cantidad, del alto de los botones */
+.detalle-cantidad{
+  width:auto;
+  min-width:84px;
+  padding-top:13px;
+  padding-bottom:13px;
+}
