@@ -61,6 +61,13 @@ Las nueve tablas del SQL tienen su reflejo en el frontend: catálogo, ventas, de
 
 La lista completa está en `CONTRATO.md`.
 
+## Documentos de la entrega
+
+| Documento | Qué es |
+|---|---|
+| [`docs/ERS-v2.md`](docs/ERS-v2.md) | Especificación de requisitos, versión 2 (etapa 2) |
+| [`docs/cobertura-testing.md`](docs/cobertura-testing.md) | Propuesta y análisis de las pruebas |
+
 ## Para trabajar en equipo
 
 - **`CONTRATO.md`** tiene los nombres de los campos, las firmas de los services, el dueño de cada archivo y las reglas de negocio. **Hay que leerlo antes de escribir código.**

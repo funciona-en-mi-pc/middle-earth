@@ -25,6 +25,7 @@
 
 export const EMAIL_MAX = 120     // JUGADOR.email VARCHAR2(120)
 export const NOMBRE_MAX = 100    // JUGADOR.nombre VARCHAR2(100)
+export const DIRECCION_MAX = 150  // no esta en el SQL: ver nota en validarDireccion
 export const PASSWORD_MIN = 4
 export const PASSWORD_MAX = 10
 
@@ -118,6 +119,23 @@ export function validarStock(valor) {
 
   return ''
 }
+
+/* La direccion de entrega del checkout.
+   NO corresponde a ninguna columna del SQL: VENTA no guarda
+   direccion. Se valida y se muestra en el resumen de la
+   compra, pero no se persiste. Si en la etapa 3 la tabla
+   VENTA gana una columna DIRECCION, este largo pasa a ser el
+   de esa columna. */
+export function validarDireccion(valor) {
+  const texto = limpiar(valor)
+
+  if (texto === '') return 'La direccion de entrega es obligatoria.'
+  if (texto.length < 5) return 'Escribe una direccion mas completa.'
+  if (texto.length > DIRECCION_MAX) return `La direccion no puede superar los ${DIRECCION_MAX} caracteres.`
+
+  return ''
+}
+
 
 /* Atajo para los formularios: recibe un objeto de errores y
    dice si estan todos vacios. */

@@ -6,11 +6,16 @@ import TiendaLayout from './layouts/TiendaLayout.jsx'
 
 import Carrito from './pages/Carrito.jsx'
 import Catalogo from './pages/Catalogo.jsx'
+import Categorias from './pages/Categorias.jsx'
+import Checkout from './pages/Checkout.jsx'
+import CompraExitosa from './pages/CompraExitosa.jsx'
+import CompraFallida from './pages/CompraFallida.jsx'
 import DetalleProducto from './pages/DetalleProducto.jsx'
 import Inicio from './pages/Inicio.jsx'
 import Login from './pages/Login.jsx'
 import MisPedidos from './pages/MisPedidos.jsx'
 import NoEncontrado from './pages/NoEncontrado.jsx'
+import Ofertas from './pages/Ofertas.jsx'
 import Perfil from './pages/Perfil.jsx'
 import Registro from './pages/Registro.jsx'
 
@@ -44,6 +49,12 @@ import Dashboard from './pages/admin/Dashboard.jsx'
                         Va al final, porque gana la primera
                         que coincide.
 
+   EL FLUJO DE COMPRA (Anexo 1)
+     /carrito -> /checkout -> /compra-exitosa/:ventaId
+                           \-> /compra-fallida
+   Las tres van dentro de RutaProtegida tipo="JUGADOR":
+   la boleta de una venta no la mira cualquiera.
+
    RUTAS PROTEGIDAS (tarea #27)
    <RutaProtegida> no lleva `path`: solo pone un portero
    delante de las rutas que tiene dentro. Asi una linea
@@ -63,6 +74,8 @@ function App() {
       <Route element={<TiendaLayout />}>
         <Route path="/" element={<Inicio />} />
         <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/categorias" element={<Categorias />} />
+        <Route path="/ofertas" element={<Ofertas />} />
         <Route path="/productos/:id" element={<DetalleProducto />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
@@ -75,6 +88,9 @@ function App() {
         {/* Solo los jugadores compran */}
         <Route element={<RutaProtegida tipo="JUGADOR" />}>
           <Route path="/carrito" element={<Carrito />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/compra-exitosa/:ventaId" element={<CompraExitosa />} />
+          <Route path="/compra-fallida" element={<CompraFallida />} />
           <Route path="/mis-pedidos" element={<MisPedidos />} />
         </Route>
 

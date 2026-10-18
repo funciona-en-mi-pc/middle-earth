@@ -3,7 +3,7 @@ import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Table from 'react-bootstrap/Table'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import CintaRegion from '../components/CintaRegion.jsx'
 import { useAuth } from '../context/useAuth.js'
@@ -11,7 +11,6 @@ import { obtenerProducto } from '../services/productoService.js'
 import {
   anularVenta,
   cantidadProductos,
-  confirmarVenta,
   detallesDeVenta,
   totalVenta,
   ventaAbiertaDe,
@@ -35,6 +34,11 @@ import { formatearOro } from '../utils/formatos.js'
    Asi nunca hay stock "reservado" sin registrar, que es
    justamente lo que el historial debe poder explicar.
 
+   AQUI YA NO SE CONFIRMA LA VENTA (Anexo 1)
+   "Ir a pagar" lleva a /checkout, que pide la direccion y la
+   forma de pago y recien ahi llama a confirmarVenta. El
+   carrito solo muestra y vacia.
+
    La venta se LEE en cada dibujado, no se guarda en estado:
    es un dato que vive en los services. Al vaciar el carrito,
    el setAlerta del final ya provoca un nuevo dibujado, y
@@ -43,7 +47,6 @@ import { formatearOro } from '../utils/formatos.js'
 
 function Carrito() {
   const { usuario } = useAuth()
-  const navigate = useNavigate()
   const [alerta, setAlerta] = useState(null)
 
   /* RutaProtegida ya exige sesion de jugador, pero la pagina
@@ -66,15 +69,6 @@ function Carrito() {
 
   const venta = ventaAbiertaDe(usuario.id)
   const lineas = venta ? detallesDeVenta(venta.ventaId) : []
-
-  const pagar = () => {
-    const intento = confirmarVenta(venta.ventaId)
-    if (!intento.ok) {
-      setAlerta({ tipo: 'danger', texto: intento.error })
-      return
-    }
-    navigate('/mis-pedidos')
-  }
 
   const vaciar = () => {
     const intento = anularVenta(venta.ventaId)
@@ -148,7 +142,7 @@ function Carrito() {
               </div>
 
               <div className="btn-row">
-                <Button className="btn-oro" onClick={pagar}>Confirmar compra</Button>
+                <Link className="btn btn-oro" to="/checkout">Ir a pagar</Link>
                 <Button className="btn-linea" onClick={vaciar}>Vaciar carrito</Button>
                 <Link className="btn btn-linea" to="/catalogo">Seguir comprando</Link>
               </div>

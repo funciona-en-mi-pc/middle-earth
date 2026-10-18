@@ -31,10 +31,19 @@
   overflow:hidden;
   box-shadow:var(--sombra);
 }
+/* 16/10 es la proporcion de portada.jpg (960x600). La imagen
+   venia en 1376x768, pero el 31% derecho y el 22% inferior
+   eran cielo negro sin dibujo: se recorto el archivo, que
+   ademas quedo pesando la mitad.
+
+   Se deja la aspect-ratio, en vez de height:auto, para que el
+   hueco ya este reservado antes de que la imagen cargue y la
+   pagina no de un salto. */
 .portada-marco img{
   width:100%;
-  aspect-ratio:4/3;
+  aspect-ratio:16/10;
   object-fit:cover;
+  display:block;
 }
 
 /* En el celular el marco de fuera se sale de la pantalla */

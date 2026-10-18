@@ -5,7 +5,7 @@
    Tarea #35.
 
    QUE HACE
-   Abre las 15 paginas en Chrome a tres anchos (375, 768 y
+   Abre las 20 paginas en Chrome a tres anchos (375, 768 y
    1280 px) y mide si alguna DESBORDA, es decir, si aparece
    barra de scroll horizontal. Cuando una desborda, nombra los
    elementos culpables con su clase y su ancho.
@@ -44,10 +44,14 @@ const ANCHOS = [
 const RUTAS = [
   { ruta: '/', sesion: null },
   { ruta: '/catalogo', sesion: null },
+  { ruta: '/categorias', sesion: null },
+  { ruta: '/ofertas', sesion: null },
   { ruta: '/productos/4', sesion: null },
   { ruta: '/login', sesion: null },
   { ruta: '/registro', sesion: null },
   { ruta: '/carrito', sesion: 'jugador' },
+  { ruta: '/checkout', sesion: 'jugador' },
+  { ruta: '/compra-fallida', sesion: 'jugador' },
   { ruta: '/mis-pedidos', sesion: 'jugador' },
   { ruta: '/perfil', sesion: 'jugador' },
   { ruta: '/admin', sesion: 'mercader' },
