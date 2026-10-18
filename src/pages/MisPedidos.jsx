@@ -30,11 +30,12 @@ import { formatearFecha, formatearOro } from '../utils/formatos.js'
    subir el precio de la Espada Dardo cambiaria el total de
    las ventas antiguas, y la boleta mentiria. */
 
-/* Cada estado con su color. La clase la define styles.css. */
+/* Cada estado con su color. La clase la define styles.css.
+   ABIERTA no aparece: ventasDeJugador() ya deja fuera el
+   carrito, asi que aqui solo llegan CONFIRMADA y ANULADA. */
 const COLOR_ESTADO = {
   CONFIRMADA: 'ok',
   ANULADA: 'alerta',
-  ABIERTA: 'aviso',
 }
 
 /* Una fila por cada pedido, con sus lineas debajo. */

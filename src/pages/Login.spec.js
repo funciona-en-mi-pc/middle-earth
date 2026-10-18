@@ -93,9 +93,13 @@ describe('Login', () => {
       expect(screen.getByText('Inicia sesion para continuar.')).toBeTruthy()
     })
 
-    it('explica que falta permiso', () => {
+    /* "sin-permiso" ya no es un motivo del login: ese caso lo
+       explica RutaProtegida en su propia pantalla, porque
+       quien lo provoca YA tiene sesion y el redirect de abajo
+       lo sacaria de aqui antes de leer nada. */
+    it('ignora el motivo sin-permiso, que ahora explica RutaProtegida', () => {
       dibujar('/login?motivo=sin-permiso')
-      expect(screen.getByText('Tu cuenta no tiene permisos para entrar ahi.')).toBeTruthy()
+      expect(screen.queryByRole('alert')).toBeNull()
     })
 
     it('explica que hay que entrar para comprar', () => {
