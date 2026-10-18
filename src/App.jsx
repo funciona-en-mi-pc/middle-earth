@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 
+import RutaProtegida from './components/RutaProtegida.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import TiendaLayout from './layouts/TiendaLayout.jsx'
 
@@ -42,6 +43,16 @@ import Dashboard from './pages/admin/Dashboard.jsx'
      path="*" ......... comodin: si ninguna ruta calzo, el 404.
                         Va al final, porque gana la primera
                         que coincide.
+
+   RUTAS PROTEGIDAS (tarea #27)
+   <RutaProtegida> no lleva `path`: solo pone un portero
+   delante de las rutas que tiene dentro. Asi una linea
+   protege un grupo entero.
+
+     sin tipo ........... hace falta sesion
+     tipo="JUGADOR" ..... carrito y pedidos: solo compran los
+                          jugadores (VENTA.jugador_id NOT NULL)
+     tipo="MERCADER" .... el panel entero
    ========================================================= */
 
 function App() {
@@ -53,23 +64,34 @@ function App() {
         <Route path="/" element={<Inicio />} />
         <Route path="/catalogo" element={<Catalogo />} />
         <Route path="/productos/:id" element={<DetalleProducto />} />
-        <Route path="/carrito" element={<Carrito />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/perfil" element={<Perfil />} />
-        <Route path="/mis-pedidos" element={<MisPedidos />} />
+
+        {/* Hace falta tener sesion */}
+        <Route element={<RutaProtegida />}>
+          <Route path="/perfil" element={<Perfil />} />
+        </Route>
+
+        {/* Solo los jugadores compran */}
+        <Route element={<RutaProtegida tipo="JUGADOR" />}>
+          <Route path="/carrito" element={<Carrito />} />
+          <Route path="/mis-pedidos" element={<MisPedidos />} />
+        </Route>
+
         <Route path="*" element={<NoEncontrado />} />
       </Route>
 
       {/* --- Panel de administracion --- */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="productos" element={<AdminProductos />} />
-        <Route path="movimientos" element={<AdminMovimientos />} />
-        <Route path="auditoria" element={<AdminAuditoria />} />
-        <Route path="jugadores" element={<AdminJugadores />} />
-        <Route path="mercaderes" element={<AdminMercaderes />} />
-        <Route path="pedidos" element={<AdminPedidos />} />
+      <Route element={<RutaProtegida tipo="MERCADER" />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="productos" element={<AdminProductos />} />
+          <Route path="movimientos" element={<AdminMovimientos />} />
+          <Route path="auditoria" element={<AdminAuditoria />} />
+          <Route path="jugadores" element={<AdminJugadores />} />
+          <Route path="mercaderes" element={<AdminMercaderes />} />
+          <Route path="pedidos" element={<AdminPedidos />} />
+        </Route>
       </Route>
 
     </Routes>

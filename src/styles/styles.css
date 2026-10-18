@@ -928,3 +928,65 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   letter-spacing:0.16em;
   color:var(--acento);
 }
+
+
+/* =========================================================
+   14. PEDIDOS  (tarea #26)
+   La tarjeta de cada pedido de "Mis pedidos", con su cabecera,
+   la tabla de lineas y el pie.
+   ========================================================= */
+.pedido{
+  margin-bottom:22px;
+  background:var(--hierro);
+  border:1px solid var(--borde);
+  border-left:3px solid var(--acento);
+  border-radius:var(--radio);
+  box-shadow:var(--sombra);
+  overflow:hidden;
+}
+.pedido-cabecera{
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:14px;
+  padding:20px 24px;
+  border-bottom:1px solid var(--borde);
+}
+.pedido-numero{
+  display:block;
+  font-family:var(--fuente-titulo);
+  font-size:0.86rem;
+  letter-spacing:0.16em;
+  color:var(--acento);
+}
+.pedido-fecha{
+  display:block;
+  margin-top:6px;
+  font-size:0.8rem;
+  font-style:italic;
+  color:var(--marfil-tenue);
+}
+.pedido-derecha{
+  display:flex; align-items:center; gap:16px;
+  flex-wrap:wrap;
+}
+.pedido-total{
+  display:flex; align-items:center; gap:9px;
+  font-size:1.25rem;
+  font-weight:600;
+  color:var(--oro-claro);
+  font-variant-numeric:tabular-nums;
+}
+.pedido-pie{
+  padding:14px 24px;
+  border-top:1px solid var(--borde);
+  font-family:var(--fuente-titulo);
+  font-size:0.6rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--marfil-tenue);
+}
+
+/* Las cifras van a la derecha para poder compararlas */
+.table .num{ text-align:right; }
+
+/* El estado vacio puede llevar un boton debajo del texto */
+.empty-state p{ margin-bottom:22px; }
