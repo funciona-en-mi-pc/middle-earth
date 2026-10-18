@@ -13,13 +13,17 @@
      El stock no se modifica en este archivo. Es la regla de
      diseno del SQL: el stock solo cambia desde
      PKG_INVENTARIO, para que todo movimiento quede en
-     MOVIMIENTO_STOCK. Aqui el equivalente sera
-     inventarioService.js (tareas #22 y #42).
+     MOVIMIENTO_STOCK. Aqui ese papel lo hace
+     inventarioService.js.
 
-     Crear, editar y borrar productos llegan en la tarea #32.
+     Por eso actualizarProducto cambia precio, nivel y estado,
+     pero NUNCA el stock, y un producto nuevo nace con stock 0
+     y lo recibe con reponerStock: asi hasta su primera
+     existencia queda en el historial.
    ========================================================= */
 
-import { CLAVES, leer } from './storage.js'
+import { auditarCambios } from './auditoriaService.js'
+import { CLAVES, guardar, leer, siguienteId } from './storage.js'
 
 
 /* =========================================================
@@ -99,4 +103,124 @@ export function estaAgotado(producto) {
    tocar ni una linea de codigo. */
 export function rutaImagen(producto) {
   return producto?.imagen ? `/img/productos/${producto.imagen}` : ''
+}
+
+
+/* =========================================================
+   ALTA — como SP_INSERTAR_PRODUCTO
+   Comprueba que la categoria exista (-20015) y crea el
+   producto con stock 0.
+   ========================================================= */
+
+export function crearProducto({ nombre, categoriaId, precio, nivelRequerido }) {
+  if (!listarCategorias().some((c) => c.categoriaId === Number(categoriaId))) {
+    return { ok: false, error: 'Categoria inexistente.' }
+  }
+
+  const productos = leer(CLAVES.productos, [])
+  const id = siguienteId(productos, 'productoId')
+
+  const producto = {
+    productoId: id,
+    categoriaId: Number(categoriaId),
+    nombre: String(nombre ?? '').trim(),
+    precio: Number(precio),
+    stock: 0,                       // nace vacio: el stock entra por reposicion
+    nivelRequerido: Number(nivelRequerido),
+    estado: 'ACTIVO',
+    imagen: `${id}.jpg`,
+  }
+
+  productos.push(producto)
+  guardar(CLAVES.productos, productos)
+
+  return { ok: true, producto }
+}
+
+
+/* =========================================================
+   EDICION — como SP_ACTUALIZAR_PRODUCTO
+   Cambia precio, nivel requerido y estado. NUNCA el stock.
+
+   Al final llama a auditarCambios, que es lo que en el SQL
+   hace solo el trigger TR_AUDITAR_PRODUCTO (regla 10). Va
+   aqui y no en el formulario para que nadie pueda saltarselo.
+   ========================================================= */
+
+export function actualizarProducto(id, cambios = {}) {
+  const productos = leer(CLAVES.productos, [])
+  const indice = productos.findIndex((p) => p.productoId === Number(id))
+  if (indice === -1) return { ok: false, error: 'Producto inexistente.' }
+
+  const antes = productos[indice]
+
+  if (cambios.precio !== undefined) {
+    const precio = Number(cambios.precio)
+    /* CHECK (precio > 0) de la tabla PRODUCTO */
+    if (Number.isNaN(precio) || precio <= 0) {
+      return { ok: false, error: 'El precio debe ser mayor que cero.' }
+    }
+  }
+
+  if (cambios.nivelRequerido !== undefined) {
+    const nivel = Number(cambios.nivelRequerido)
+    /* CHECK (nivel_requerido > 0) */
+    if (!Number.isInteger(nivel) || nivel <= 0) {
+      return { ok: false, error: 'El nivel requerido debe ser un entero mayor que cero.' }
+    }
+  }
+
+  const despues = {
+    ...antes,
+    ...cambios,
+    /* El stock se protege a proposito: aunque llegue en
+       `cambios`, se ignora. Solo inventarioService lo mueve. */
+    stock: antes.stock,
+  }
+
+  if (cambios.precio !== undefined) despues.precio = Number(cambios.precio)
+  if (cambios.nivelRequerido !== undefined) despues.nivelRequerido = Number(cambios.nivelRequerido)
+  if (cambios.categoriaId !== undefined) despues.categoriaId = Number(cambios.categoriaId)
+
+  productos[indice] = despues
+  guardar(CLAVES.productos, productos)
+
+  /* REGLA 10: queda el rastro de lo que cambio */
+  auditarCambios(Number(id), antes, despues)
+
+  return { ok: true, producto: despues }
+}
+
+
+/* =========================================================
+   BAJA — como SP_ELIMINAR_PRODUCTO
+   REGLA 9: un producto con ventas o con movimientos de stock
+   NO se borra, porque se perderia el historial. Se deja
+   INACTIVO, que lo saca de la tienda sin borrar su pasado.
+   ========================================================= */
+
+export function eliminarProducto(id) {
+  const productos = leer(CLAVES.productos, [])
+  const producto = productos.find((p) => p.productoId === Number(id))
+  if (!producto) return { ok: false, error: 'Producto inexistente.' }
+
+  const vendido = leer(CLAVES.detalles, []).some((d) => d.productoId === Number(id))
+  const movido = leer(CLAVES.movimientos, []).some((m) => m.productoId === Number(id))
+
+  if (vendido || movido) {
+    return {
+      ok: false,
+      error: 'No se puede eliminar: el producto tiene ventas o movimientos de stock. Dejalo INACTIVO.',
+    }
+  }
+
+  guardar(CLAVES.productos, productos.filter((p) => p.productoId !== Number(id)))
+
+  return { ok: true }
+}
+
+/* La alternativa a borrar. Pasa por actualizarProducto para
+   que el cambio de estado quede auditado. */
+export function inactivarProducto(id) {
+  return actualizarProducto(id, { estado: 'INACTIVO' })
 }
