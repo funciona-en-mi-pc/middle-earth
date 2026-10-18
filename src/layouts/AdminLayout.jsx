@@ -104,8 +104,10 @@ function AdminLayout() {
         <Menu />
       </aside>
 
-      {/* Barra con el boton del menu: visible solo bajo 992 px */}
-      <div>
+      {/* La otra columna de la rejilla. La clase admin-col le
+          pone min-width:0: sin eso, una tabla ancha estira la
+          columna y desborda la pagina en el celular. */}
+      <div className="admin-col">
         <div className="admin-bar">
           <Button variant="linea" size="sm" onClick={() => setCajonAbierto(true)}>
             Menu

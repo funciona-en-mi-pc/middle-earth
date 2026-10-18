@@ -819,9 +819,17 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   color:var(--marfil-tenue);
 }
 
+/* La columna de contenido de la rejilla.
+
+   min-width:0 es imprescindible: por defecto, un elemento de
+   una rejilla vale min-width:auto, o sea "no me encojas por
+   debajo de mi contenido". Con una tabla ancha dentro, eso
+   estira la columna y desborda la pagina entera en el celular.
+   Lo midio la revision responsiva de la tarea #35: el panel
+   se salia hasta 572 px a 375 px de ancho. */
+.admin-col{ min-width:0; }
+
 .admin-main{
-  /* min-width:0 evita que una tabla ancha estire la columna
-     de la rejilla y desborde la pagina en el celular. */
   min-width:0;
   max-width:1500px;
   padding:clamp(24px,3vw,40px) clamp(20px,3vw,44px) 90px;
