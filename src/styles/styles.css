@@ -915,3 +915,16 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 @media (prefers-reduced-motion: reduce){
   *{ transition:none !important; animation:none !important; }
 }
+
+
+/* =========================================================
+   13. SESION EN LA NAVBAR  (tarea #11)
+   El <small> que acompana al nombre con el nivel del jugador
+   o el cargo del mercader.
+   ========================================================= */
+.nav-usuario{ gap:9px; line-height:1.2; }
+.nav-usuario small{
+  font-size:0.56rem;
+  letter-spacing:0.16em;
+  color:var(--acento);
+}

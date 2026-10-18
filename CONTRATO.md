@@ -86,8 +86,19 @@ El **usuario con la sesión abierta** siempre tiene esta forma, y es lo que Jos�
 ```
 `nivel` solo viene si es jugador; `cargo` solo si es mercader.
 
-### `context/AuthContext.jsx` — Javier, tarea #9
+### Contexto de sesión — Javier, tarea #9
+
+Son **tres archivos**, porque la regla de lint `react-refresh/only-export-components` no deja que un archivo con componentes exporte además otras cosas:
+
+| Archivo | Qué tiene |
+|---|---|
+| `context/AuthContext.js` | El contexto (la caja donde viaja la sesión) |
+| `context/AuthProvider.jsx` | El proveedor, que la llena. Envuelve la app en `main.jsx` |
+| `context/useAuth.js` | El atajo para leerla |
+
 ```js
+import { useAuth } from '../context/useAuth.js'
+
 const { usuario, login, logout } = useAuth()
 ```
 `usuario` es `null` si nadie entró. **José usa esto** para saber el nivel del jugador en el catálogo y en el carrito. Nadie lee `localStorage` directamente desde una página.
@@ -165,6 +176,7 @@ Funciones puras: reciben un valor y devuelven `''` si está bien, o el mensaje d
 validarEmail(valor)        // obligatorio, formato, máx. 120
 validarPassword(valor)     // obligatoria, 4 a 10
 validarNombre(valor)       // obligatorio, máx. 100
+sinErrores(errores)        // true si todos los mensajes están vacíos
 validarConfirmacion(valor, original)
 validarNivel(valor)        // entero mayor que 0
 validarPrecio(valor)       // mayor que 0
@@ -205,6 +217,7 @@ validarStock(valor)        // entero, 0 o más
 | `src/App.jsx` | Nadie: ya tiene todas las rutas, no hace falta tocarlo |
 | `src/main.jsx` | Javier |
 | `src/components/Navbar.jsx` | Javier |
+| `src/context/` | Javier |
 | `src/components/Footer.jsx` | Javier |
 | `src/layouts/TiendaLayout.jsx` | Javier |
 | `src/layouts/AdminLayout.jsx` | Javier |
