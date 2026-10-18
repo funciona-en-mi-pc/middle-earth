@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 
 import CintaRegion from '../components/CintaRegion.jsx'
 import { useAuth } from '../context/useAuth.js'
@@ -18,6 +18,12 @@ import { validarEmail, validarPassword } from '../utils/validaciones.js'
    pintaba el error encima. Aqui nadie toca el HTML: el valor
    y el error de cada campo viven en useState, y React vuelve
    a dibujar lo que cambio.
+
+   A DONDE VA CADA UNO
+   El jugador a la tienda y el mercader al panel. Lo decide el
+   <Navigate> de mas abajo, no un navigate() a mano: asi la
+   misma linea sirve para quien acaba de entrar y para quien
+   ya tenia la sesion abierta.
 
    CUANDO SE VALIDA
      onBlur .... al salir del campo, siempre
@@ -35,7 +41,6 @@ const MOTIVOS = {
 
 function Login() {
   const { usuario, login } = useAuth()
-  const navigate = useNavigate()
   const [parametros] = useSearchParams()
 
   const [campos, setCampos] = useState({ email: '', password: '' })
@@ -45,7 +50,12 @@ function Login() {
     return motivo && MOTIVOS[motivo] ? { tipo: 'danger', texto: MOTIVOS[motivo] } : null
   })
 
-  /* Si ya hay sesion, esta pagina no tiene sentido.
+  /* Este if hace DOS cosas:
+       1. Si ya habia sesion, el login no tiene sentido.
+       2. Cuando el login sale bien, `usuario` cambia, esta
+          pagina se vuelve a dibujar y el redirect lleva a cada
+          uno a su sitio: jugador a la tienda, mercader al
+          panel.
      `replace` evita que el boton "atras" vuelva al login. */
   if (usuario) {
     return <Navigate to={usuario.tipo === 'MERCADER' ? '/admin' : '/'} replace />
@@ -93,11 +103,8 @@ function Login() {
       return
     }
 
-    /* Al mercader lo mandamos a su panel; al jugador, a la
-       tienda. El respiro de 700 ms deja leer el saludo. */
-    setAlerta({ tipo: 'success', texto: `Bienvenido de vuelta, ${intento.usuario.nombre}.` })
-    const destino = intento.usuario.tipo === 'MERCADER' ? '/admin' : '/'
-    setTimeout(() => navigate(destino, { replace: true }), 700)
+    /* Entro bien. No hace falta redirigir aqui: al cambiar el
+       usuario del contexto, el <Navigate> de arriba se encarga. */
   }
 
   return (
