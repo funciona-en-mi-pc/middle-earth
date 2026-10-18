@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table'
 import { Link, useLocation, useParams } from 'react-router-dom'
 
 import CintaRegion from '../components/CintaRegion.jsx'
+import { useAuth } from '../context/useAuth.js'
 import { obtenerProducto } from '../services/productoService.js'
 import { detallesDeVenta, obtenerVenta, totalVenta } from '../services/ventaService.js'
 import { formatearFecha, formatearOro } from '../utils/formatos.js'
@@ -24,16 +25,30 @@ import { formatearFecha, formatearOro } from '../utils/formatos.js'
 
    NO VUELVE A TOCAR EL STOCK
    El stock se descuenta al agregar al carrito y la venta ya
-   quedo CONFIRMADA en el checkout. Esta pagina solo lee. */
+   quedo CONFIRMADA en el checkout. Esta pagina solo lee.
+
+   LA BOLETA ES DE QUIEN LA COMPRO
+   RutaProtegida solo exige SER jugador, no ser ESE jugador:
+   con el id en la URL, cualquiera veria la compra ajena. Por
+   eso se comprueba el dueno aqui, igual que MisPedidos.
+   Y solo hay boleta si la venta se confirmo: con el id de un
+   carrito abierto, esta pagina diria "pago aceptado" por algo
+   que nadie pago. */
 
 function CompraExitosa() {
   const { ventaId } = useParams()
   const { state } = useLocation()
+  const { usuario } = useAuth()
 
   const venta = obtenerVenta(ventaId)
   const envio = state?.envio
 
-  if (!venta) {
+  /* El mismo aviso para las tres: que no exista, que sea de
+     otro o que no este pagada. Asi no confirmamos que ese id
+     exista. */
+  const esSuya = venta?.jugadorId === usuario?.id && venta?.estado === 'CONFIRMADA'
+
+  if (!esSuya) {
     return (
       <>
         <CintaRegion region="minas-tirith" nombre="Minas Tirith" subtitulo="La casa del tesoro" />

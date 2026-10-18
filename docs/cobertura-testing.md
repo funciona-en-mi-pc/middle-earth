@@ -51,7 +51,7 @@ cambia el CSS, y que fallen si se rompe la accesibilidad.
 ### 1.4 Cómo se ejecuta
 
 ```bash
-npm test        # las 448 pruebas, una vez
+npm test        # las 450 pruebas, una vez
 npm run test:watch   # se queda corriendo y repite al guardar
 npm run coverage     # las pruebas + el informe en coverage/index.html
 ```
@@ -221,7 +221,7 @@ Informe generado con `npm run coverage` (karma-coverage + Istanbul):
 | **Funciones** | 306 | 317 | **96,52 %** |
 | **Líneas** | 870 | 896 | **97,09 %** |
 
-**448 pruebas** repartidas en **34 archivos** `.spec.js`, todas pasando.
+**450 pruebas** repartidas en **34 archivos** `.spec.js`, todas pasando.
 
 ### 4.2 Por capa
 
@@ -313,11 +313,11 @@ it('repite el motivo que devuelve ventaService', () => {
 | `pages/Ofertas.spec.js` | 8 |
 | `components/ProductoCard.spec.js` | 8 |
 | `context/useAuth.spec.js` | 7 |
+| `pages/CompraExitosa.spec.js` | 7 |
 | `pages/Categorias.spec.js` | 6 |
 | `utils/rareza.spec.js` | 6 |
-| `pages/CompraExitosa.spec.js` | 5 |
 | `pages/CompraFallida.spec.js` | 4 |
-| **Total** | **448** |
+| **Total** | **450** |
 
 ---
 

@@ -364,13 +364,13 @@ Cada requisito nuevo, con el archivo que lo implementa y la prueba que lo defien
 | RF-18 Autorrelleno | `pages/Checkout.jsx` | `Checkout.spec.js` — "rellena solo los datos del jugador" |
 | RF-19 Validación | `utils/validaciones.js` | `utils/validaciones.spec.js` (29) |
 | RF-20 Pago correcto | `pages/Checkout.jsx`, `ventaService.confirmarVenta` | `Checkout.spec.js` — "confirma la venta y lleva a la boleta" |
-| RF-21 Boleta | `pages/CompraExitosa.jsx` | `pages/CompraExitosa.spec.js` (5) |
+| RF-21 Boleta | `pages/CompraExitosa.jsx` | `pages/CompraExitosa.spec.js` (7) |
 | RF-22 Pago rechazado | `pages/CompraFallida.jsx` | `pages/CompraFallida.spec.js` (4) |
 | RF-23 Carrito intacto | `pages/Checkout.jsx` | `Checkout.spec.js` — "deja el carrito y el stock como estaban" |
 | RF-34/35 Rutas protegidas | `components/RutaProtegida.jsx` | `components/RutaProtegida.spec.js` (12) |
 | RN-01 a RN-10 | `services/` | ver `docs/cobertura-testing.md`, sección 3 |
 
-**Estado global:** 448 pruebas en 34 archivos, todas pasando. Cobertura: 95,98 % de
+**Estado global:** 450 pruebas en 34 archivos, todas pasando. Cobertura: 95,98 % de
 sentencias, 91,63 % de ramas, 96,52 % de funciones, 97,09 % de líneas.
 
 ---
@@ -386,7 +386,7 @@ sentencias, 91,63 % de ramas, 96,52 % de funciones, 97,09 % de líneas.
 | **Compra** | Carrito estático | Carrito real + **checkout + boleta + pago rechazado** |
 | **Catálogo** | Lista fija | Filtros por categoría (en la URL) y por nivel, **categorías**, **ofertas** |
 | **Administración** | 8 páginas de maqueta | 7 páginas funcionales con CRUD, stock y auditoría |
-| **Pruebas** | Ninguna | **448 pruebas con Jasmine y Karma, 97 % de líneas** |
+| **Pruebas** | Ninguna | **450 pruebas con Jasmine y Karma, 97 % de líneas** |
 | **Responsivo** | Parcial | Verificado automáticamente en todas las rutas |
 
 **Requisitos de la V1 que se retiraron.** El mockup proponía `rareza`, `codigo`
