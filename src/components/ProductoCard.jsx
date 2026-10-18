@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import EmblemaCategoria from './EmblemaCategoria.jsx'
 import { nombreCategoria, rutaImagen } from '../services/productoService.js'
 import { formatearOro } from '../utils/formatos.js'
+import { ofertaDe, precioAntes } from '../utils/oferta.js'
 import { claseRareza, nombreRareza } from '../utils/rareza.js'
 
 /* =========================================================
@@ -24,6 +25,13 @@ import { claseRareza, nombreRareza } from '../utils/rareza.js'
    (ver utils/rareza.js). Asi se recupera el detalle visual
    del mockup sin inventar una columna.
 
+   LA OFERTA
+   El descuento no esta en el SQL: se deriva del stock (ver
+   utils/oferta.js). OJO: el precio del producto YA es el
+   rebajado, porque es el que ventaService copia a la boleta
+   (regla 8). Lo tachado es el precio ANTERIOR, reconstruido.
+   Asi la ficha y la boleta nunca se contradicen.
+
    LA IMAGEN Y EL SELLO
    Si el producto tiene foto, se muestra. Encima va siempre el
    sello heraldico de su categoria, en el color de la rareza:
@@ -35,6 +43,8 @@ import { claseRareza, nombreRareza } from '../utils/rareza.js'
 
 function ProductoCard({ producto, nivelJugador }) {
   const agotado = producto.stock <= 0
+  const descuento = ofertaDe(producto)
+  const antes = precioAntes(producto)
   const sinNivel = nivelJugador !== undefined && nivelJugador < producto.nivelRequerido
 
   return (
@@ -48,6 +58,7 @@ function ProductoCard({ producto, nivelJugador }) {
           categoriaId={producto.categoriaId}
           titulo={`${nombreCategoria(producto.categoriaId)} · ${nombreRareza(producto)}`}
         />
+        {descuento > 0 && <span className="item-oferta">-{descuento}%</span>}
       </Link>
 
       <span className="item-categoria">
@@ -67,6 +78,9 @@ function ProductoCard({ producto, nivelJugador }) {
       <div className="item-price">
         <span className="coin" aria-hidden="true"></span>
         {formatearOro(producto.precio)}
+        {antes !== null && (
+          <s className="item-antes">{formatearOro(antes)}</s>
+        )}
       </div>
 
       {sinNivel && (

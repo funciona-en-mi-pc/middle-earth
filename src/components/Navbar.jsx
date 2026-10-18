@@ -66,6 +66,8 @@ function Navbar() {
           <Nav className="mx-lg-auto">
             <Nav.Link as={NavLink} to="/" end>Inicio</Nav.Link>
             <Nav.Link as={NavLink} to="/catalogo">Mercado</Nav.Link>
+            <Nav.Link as={NavLink} to="/categorias">Categorias</Nav.Link>
+            <Nav.Link as={NavLink} to="/ofertas">Ofertas</Nav.Link>
           </Nav>
 
           <div className="nav-acciones">

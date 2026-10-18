@@ -11,15 +11,14 @@ import {
   crearVenta,
   listarVentas,
   obtenerVenta,
-  ventaAbiertaDe,
 } from '../services/ventaService.js'
 
 /* =========================================================
    Pruebas de Carrito.jsx — Jose, tarea #33
    ---------------------------------------------------------
    El carrito ES la venta ABIERTA del jugador, asi que estas
-   pruebas comprueban tambien que confirmar y vaciar hacen lo
-   que manda el SQL.
+   pruebas comprueban tambien que vaciar hace lo que manda el
+   SQL. Pagar ya no se hace aqui: el boton lleva a /checkout.
    ========================================================= */
 
 function dibujar() {
@@ -29,6 +28,7 @@ function dibujar() {
         <Routes>
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/mis-pedidos" element={<p>Estoy en mis pedidos</p>} />
+          <Route path="/checkout" element={<p>Estoy en el checkout</p>} />
         </Routes>
       </AuthProvider>
     </MemoryRouter>,
@@ -82,35 +82,19 @@ describe('Carrito', () => {
     })
   })
 
-  describe('confirmar la compra', () => {
-    it('deja la venta CONFIRMADA y lleva a mis pedidos', () => {
+  /* Confirmar la venta ya NO pasa por aqui: el carrito manda
+     al checkout, que es quien llama a confirmarVenta. Esas
+     pruebas viven ahora en Checkout.spec.js. */
+  describe('ir a pagar', () => {
+    it('lleva al checkout sin tocar la venta', () => {
       const venta = llenarCarrito()
       dibujar()
 
-      pulsar('Confirmar compra')
+      fireEvent.click(screen.getByText('Ir a pagar'))
 
-      expect(obtenerVenta(venta.ventaId).estado).toBe('CONFIRMADA')
-      expect(screen.getByText('Estoy en mis pedidos')).toBeTruthy()
-    })
-
-    /* El stock ya se descontó al agregar (regla 6): confirmar
-       no lo vuelve a tocar. */
-    it('no vuelve a descontar el stock', () => {
-      llenarCarrito()
-      expect(stockDisponible(6)).toBe(37)   // 40 - 3
-
-      dibujar()
-      pulsar('Confirmar compra')
-
-      expect(stockDisponible(6)).toBe(37)   // sigue igual
-    })
-
-    it('despues ya no hay carrito abierto', () => {
-      llenarCarrito()
-      dibujar()
-      pulsar('Confirmar compra')
-
-      expect(ventaAbiertaDe(4)).toBeNull()
+      expect(screen.getByText('Estoy en el checkout')).toBeTruthy()
+      expect(obtenerVenta(venta.ventaId).estado).toBe('ABIERTA')
+      expect(stockDisponible(6)).toBe(37)   // 40 - 3, sin cambios
     })
   })
 

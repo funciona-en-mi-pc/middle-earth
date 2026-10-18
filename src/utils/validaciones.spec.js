@@ -1,9 +1,11 @@
 import {
+  DIRECCION_MAX,
   EMAIL_MAX,
   PASSWORD_MAX,
   PASSWORD_MIN,
   sinErrores,
   validarConfirmacion,
+  validarDireccion,
   validarEmail,
   validarNivel,
   validarNombre,
@@ -171,5 +173,27 @@ describe('sinErrores', () => {
 
   it('es false si queda aunque sea un mensaje', () => {
     expect(sinErrores({ email: '', password: 'La contrasena es obligatoria.' })).toBe(false)
+  })
+})
+
+
+describe('validarDireccion', () => {
+  it('acepta una direccion normal', () => {
+    expect(validarDireccion('Bolson Cerrado 1, Hobbiton')).toBe('')
+  })
+
+  it('la exige', () => {
+    expect(validarDireccion('')).toBe('La direccion de entrega es obligatoria.')
+    expect(validarDireccion('   ')).toBe('La direccion de entrega es obligatoria.')
+    expect(validarDireccion(null)).toBe('La direccion de entrega es obligatoria.')
+  })
+
+  it('rechaza una direccion demasiado corta', () => {
+    expect(validarDireccion('ahi')).toBe('Escribe una direccion mas completa.')
+  })
+
+  it('rechaza una direccion demasiado larga', () => {
+    expect(validarDireccion('a'.repeat(DIRECCION_MAX + 1)))
+      .toBe(`La direccion no puede superar los ${DIRECCION_MAX} caracteres.`)
   })
 })
