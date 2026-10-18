@@ -10,6 +10,7 @@ import './styles/fuentes.css'
 import './styles/styles.css'
 
 import App from './App.jsx'
+import AuthProvider from './context/AuthProvider.jsx'
 import { sembrarDatos } from './services/storage.js'
 
 /* Siembra las nueve tablas en localStorage si todavia no
@@ -22,7 +23,12 @@ createRoot(document.getElementById('root')).render(
     {/* BrowserRouter habilita las rutas. Tiene que envolver a
         App, porque dentro se usan <Routes> y <NavLink>. */}
     <BrowserRouter>
-      <App />
+      {/* AuthProvider deja la sesion disponible para toda la
+          aplicacion. Va dentro de BrowserRouter para que las
+          paginas puedan usar la sesion y las rutas a la vez. */}
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )
