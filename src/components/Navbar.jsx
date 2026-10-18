@@ -5,6 +5,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import logo from '../assets/img/logo.png'
 import { useAuth } from '../context/useAuth.js'
+import { cantidadItemsCarrito } from '../services/ventaService.js'
 
 /* =========================================================
    Navbar — la navegacion de la tienda
@@ -23,6 +24,14 @@ import { useAuth } from '../context/useAuth.js'
    El mercader NO ve el carrito: en el SQL, VENTA.jugador_id
    es NOT NULL, asi que siempre compra un jugador.
 
+   EL CONTADOR DEL CARRITO
+   Sale de ventaService.cantidadItemsCarrito(), de Jose. El
+   carrito es la venta ABIERTA del jugador, asi que el numero
+   es la suma de las unidades de su detalle.
+
+   Se lee en cada dibujado: al entrar, al salir y al volver de
+   comprar, la navbar se redibuja y el numero ya viene bien.
+
    Lee la sesion con useAuth, nunca de localStorage. Por eso
    la navbar se actualiza sola al entrar o salir, sin recargar.
 
@@ -34,6 +43,8 @@ import { useAuth } from '../context/useAuth.js'
 function Navbar() {
   const { usuario, logout } = useAuth()
   const navigate = useNavigate()
+
+  const enCarrito = usuario?.tipo === 'JUGADOR' ? cantidadItemsCarrito(usuario.id) : 0
 
   const salir = () => {
     logout()
@@ -91,12 +102,10 @@ function Navbar() {
               </>
             )}
 
-            {/* Solo los jugadores compran. El contador queda en
-                0 hasta la tarea #30: entonces se leera de
-                ventaService.cantidadItemsCarrito(jugadorId). */}
+            {/* Solo los jugadores compran */}
             {(!usuario || usuario.tipo === 'JUGADOR') && (
               <Link className="btn-carrito" to="/carrito" aria-label="Ver carrito">
-                Carrito <span className="cart-count">0</span>
+                Carrito <span className="cart-count">{enCarrito}</span>
               </Link>
             )}
 
