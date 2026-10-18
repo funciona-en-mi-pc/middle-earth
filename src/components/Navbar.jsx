@@ -105,7 +105,9 @@ function Navbar() {
             {/* Solo los jugadores compran */}
             {(!usuario || usuario.tipo === 'JUGADOR') && (
               <Link className="btn-carrito" to="/carrito" aria-label="Ver carrito">
-                Carrito <span className="cart-count">{enCarrito}</span>
+                {/* La `key` cambia con el numero: React vuelve a
+                    crear el span y la animacion se dispara sola. */}
+                Carrito <span className="cart-count" key={enCarrito}>{enCarrito}</span>
               </Link>
             )}
 

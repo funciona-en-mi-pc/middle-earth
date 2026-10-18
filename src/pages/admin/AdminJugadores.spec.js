@@ -32,6 +32,17 @@ const escribir = (etiqueta, valor) =>
   fireEvent.change(screen.getByLabelText(etiqueta), { target: { value: valor } })
 const guardar = () => fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
+/* Borrar ahora son dos pasos: pulsar Eliminar en la fila y
+   confirmar en el dialogo. */
+const confirmarBorrado = () =>
+  fireEvent.click(screen.getByRole('button', { name: 'Si, eliminar' }))
+
+const borrarDeVerdad = (nombre) => {
+  pulsarEn(nombre, 'Eliminar')
+  confirmarBorrado()
+}
+
+
 describe('AdminJugadores', () => {
   beforeEach(() => {
     reiniciarDatos()
@@ -161,12 +172,36 @@ describe('AdminJugadores', () => {
 
   /* REGLA 9 — prueba 15.9 del script SQL */
   describe('eliminar', () => {
-    it('borra a quien no tiene ventas', () => {
+    it('borra a quien no tiene ventas, tras confirmar', () => {
       dibujar()
-      pulsarEn('Gimli', 'Eliminar')
+      borrarDeVerdad('Gimli')
 
       expect(screen.getByText('Gimli eliminado.')).toBeTruthy()
       expect(listarJugadores().length).toBe(5)
+    })
+
+    /* El paso que evita el clic de mas */
+    it('pregunta antes de borrar', () => {
+      dibujar()
+      pulsarEn('Gimli', 'Eliminar')
+
+      expect(screen.getByText('Confirmar')).toBeTruthy()
+      expect(listarJugadores().length).toBe(6)   // todavia no borro nada
+    })
+
+    it('si se cancela, no borra', () => {
+      dibujar()
+      pulsarEn('Gimli', 'Eliminar')
+      fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+
+      expect(listarJugadores().length).toBe(6)
+    })
+
+    it('el dialogo sugiere inactivar en vez de borrar', () => {
+      dibujar()
+      pulsarEn('Gimli', 'Eliminar')
+
+      expect(screen.getByText(/conserva su historial/)).toBeTruthy()
     })
 
     it('NO borra a quien tiene ventas', () => {
@@ -174,7 +209,7 @@ describe('AdminJugadores', () => {
       agregarProducto(venta.ventaId, 6, 1)
 
       dibujar()
-      pulsarEn('Aragorn', 'Eliminar')
+      borrarDeVerdad('Aragorn')
 
       expect(screen.getByText(/Dejalo INACTIVO/)).toBeTruthy()
       expect(obtenerJugador(4)).not.toBeNull()

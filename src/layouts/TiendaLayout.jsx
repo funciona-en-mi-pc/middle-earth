@@ -1,5 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
+import { useTituloDeRuta } from '../utils/useTituloDeRuta.js'
+
 import Footer from '../components/Footer.jsx'
 import Navbar from '../components/Navbar.jsx'
 
@@ -19,6 +21,8 @@ import Navbar from '../components/Navbar.jsx'
    ========================================================= */
 
 function TiendaLayout() {
+  useTituloDeRuta()
+
   return (
     <div className="pagina">
       <Navbar />

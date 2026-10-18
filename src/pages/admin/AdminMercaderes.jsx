@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form'
 import Modal from 'react-bootstrap/Modal'
 import Table from 'react-bootstrap/Table'
 
+import ConfirmarBorrado from '../../components/ConfirmarBorrado.jsx'
 import { useAuth } from '../../context/useAuth.js'
 import {
   CARGOS,
@@ -46,6 +47,7 @@ function AdminMercaderes() {
   const puedeTocar = usuario.cargo === 'ADMINISTRADOR'
 
   const [alerta, setAlerta] = useState(null)
+  const [aBorrar, setABorrar] = useState(null)   // null = nadie en la mira
   const [editando, setEditando] = useState(null)
   const [campos, setCampos] = useState(VACIO)
   const [errores, setErrores] = useState(VACIO)
@@ -107,7 +109,12 @@ function AdminMercaderes() {
     setEditando(null)
   }
 
-  const borrar = (mercader) => {
+  /* Borrar es en dos pasos: primero se pregunta, y solo
+     despues se borra. Ver ConfirmarBorrado. */
+  const borrar = () => {
+    const mercader = aBorrar
+    setABorrar(null)
+
     const intento = eliminarMercader(mercader.mercaderId)
     setAlerta(intento.ok
       ? { tipo: 'success', texto: `${mercader.nombre} eliminado.` }
@@ -179,7 +186,7 @@ function AdminMercaderes() {
                     <Button size="sm" className="btn-linea" onClick={() => cambiarEstado(mercader)}>
                       {mercader.estado === 'ACTIVO' ? 'Inactivar' : 'Activar'}
                     </Button>
-                    <Button size="sm" className="btn-linea" onClick={() => borrar(mercader)}>
+                    <Button size="sm" className="btn-linea" onClick={() => setABorrar(mercader)}>
                       Eliminar
                     </Button>
                   </td>
@@ -189,6 +196,14 @@ function AdminMercaderes() {
           </tbody>
         </Table>
       </div>
+
+      <ConfirmarBorrado
+        mostrar={aBorrar !== null}
+        nombre={aBorrar?.nombre}
+        queEs="el mercader"
+        onCancelar={() => setABorrar(null)}
+        onConfirmar={borrar}
+      />
 
       <Modal show={editando !== null} onHide={() => setEditando(null)} centered>
         <Modal.Header closeButton closeVariant="white">

@@ -48,6 +48,16 @@
   --marfil-tenue:#A49877;
   --verde-claro:#3F8C5E;
   --rojo-claro:#C4472F;
+
+  /* ---- Versiones aclaradas, SOLO para texto ----
+     Medido con la formula de contraste de WCAG: sobre el
+     hierro de las tarjetas, el rojo original daba 2.92 y el
+     verde 3.48, cuando el minimo para texto es 4.5. O sea,
+     los mensajes de error eran justo lo que peor se leia.
+     Estos dan 5.06 y 5.09. Los originales se mantienen para
+     bordes y acentos, donde el minimo es 3. */
+  --rojo-texto:#D98373;
+  --verde-texto:#66A880;
   --plata:#C3CBCC;
   --mithril:#9FB8D0;
 
@@ -480,6 +490,14 @@ img{ max-width:100%; display:block; }
   color:var(--acento);
 }
 
+/* El filo de arriba lleva el color de la RAREZA, que se
+   deriva del nivel requerido (ver utils/rareza.js). Si no se
+   reconoce la rareza, cae en el acento de la region. */
+.rareza-comun      { --rareza:#9AA093; }
+.rareza-raro       { --rareza:var(--azul); }
+.rareza-epico      { --rareza:var(--naranja); }
+.rareza-legendario { --rareza:var(--ambar); }
+
 .item-card{
   display:flex;
   flex-direction:column;
@@ -488,7 +506,7 @@ img{ max-width:100%; display:block; }
   padding:20px;
   background:var(--hierro);
   border:1px solid var(--borde);
-  border-top:3px solid var(--acento);
+  border-top:3px solid var(--rareza, var(--acento));
   border-radius:var(--radio);
   box-shadow:var(--sombra);
   transition:transform .2s, border-color .2s;
@@ -511,12 +529,37 @@ img{ max-width:100%; display:block; }
   display:block;
 }
 .item-categoria{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
   font-family:var(--fuente-titulo);
-  font-size:0.6rem;
+  font-size:0.68rem;
   letter-spacing:0.2em;
   text-transform:uppercase;
   color:var(--acento);
 }
+/* El nombre de la rareza, a la derecha y en su color */
+.item-categoria small{
+  font-size:inherit;
+  letter-spacing:inherit;
+  color:var(--rareza, var(--marfil-tenue));
+}
+
+/* El sello heraldico, encima de la imagen. Lo dibuja
+   EmblemaCategoria en SVG: ver ese archivo para saber por
+   que no basta con la foto. */
+.item-thumb{ position:relative; }
+.emblema{
+  position:absolute;
+  width:38%;
+  max-width:92px;
+  color:var(--rareza, var(--acento));
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,0.85));
+  opacity:.95;
+}
+/* La imagen se atenua para que el sello se lea encima */
+.item-thumb img{ opacity:.45; }
+.item-card:hover .item-thumb img{ opacity:.6; }
 .item-name{ font-size:1.05rem; margin:0; }
 .item-card a:hover .item-name{ color:var(--oro-claro); }
 .item-meta{
@@ -618,7 +661,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   box-shadow:0 0 0 1px var(--verde-claro);
   background-image:none;
 }
-.invalid-feedback{ color:var(--rojo-claro); font-size:0.82rem; }
+.invalid-feedback{ color:var(--rojo-texto); font-size:0.82rem; }
 
 .form-text{
   margin-top:7px;
@@ -637,13 +680,13 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   border:1px solid var(--verde-claro);
   border-left:3px solid var(--verde-claro);
   background:rgba(31,74,50,0.28);
-  color:var(--verde-claro);
+  color:var(--verde-texto);
 }
 .alert-danger{
   border:1px solid var(--rojo-claro);
   border-left:3px solid var(--rojo-claro);
   background:rgba(143,36,24,0.26);
-  color:var(--rojo-claro);
+  color:var(--rojo-texto);
 }
 
 .form-foot{ text-align:center; margin:24px 0 0; font-size:0.9rem; color:var(--marfil-tenue); }
@@ -673,7 +716,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   padding:15px 18px;
   background:rgba(11,13,12,0.5);
   border-bottom:1px solid var(--borde);
-  font-size:0.6rem;
+  font-size:0.68rem;
   color:var(--marfil-tenue);
   white-space:nowrap;
 }
@@ -699,7 +742,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .kpi .l{
   display:block;
   margin-top:8px;
-  font-size:0.58rem;
+  font-size:0.68rem;
   color:var(--marfil-tenue);
 }
 
@@ -710,14 +753,14 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   border-radius:var(--radio);
   background:transparent !important;
   font-family:var(--fuente-titulo);
-  font-size:0.58rem;
+  font-size:0.68rem;
   font-weight:400;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
 }
-.badge.ok     { border-color:var(--verde-claro); color:var(--verde-claro); }
-.badge.alerta { border-color:var(--rojo-claro);  color:var(--rojo-claro); }
+.badge.ok     { border-color:var(--verde-claro); color:var(--verde-texto); }
+.badge.alerta { border-color:var(--rojo-claro);  color:var(--rojo-texto); }
 .badge.aviso  { border-color:var(--ambar);       color:var(--ambar); }
 
 
@@ -745,7 +788,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .rail-mark{
   margin:0;
   font-family:var(--fuente-titulo);
-  font-size:0.56rem;
+  font-size:0.68rem;
   letter-spacing:0.26em;
   text-transform:uppercase;
   color:var(--acento);
@@ -794,7 +837,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .rail-group{
   margin:18px 0 6px;
   padding:0 12px;
-  font-size:0.54rem;
+  font-size:0.68rem;
   letter-spacing:0.24em;
   color:var(--marfil-tenue);
   opacity:.65;
@@ -819,9 +862,17 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   color:var(--marfil-tenue);
 }
 
+/* La columna de contenido de la rejilla.
+
+   min-width:0 es imprescindible: por defecto, un elemento de
+   una rejilla vale min-width:auto, o sea "no me encojas por
+   debajo de mi contenido". Con una tabla ancha dentro, eso
+   estira la columna y desborda la pagina entera en el celular.
+   Lo midio la revision responsiva de la tarea #35: el panel
+   se salia hasta 572 px a 375 px de ancho. */
+.admin-col{ min-width:0; }
+
 .admin-main{
-  /* min-width:0 evita que una tabla ancha estire la columna
-     de la rejilla y desborde la pagina en el celular. */
   min-width:0;
   max-width:1500px;
   padding:clamp(24px,3vw,40px) clamp(20px,3vw,44px) 90px;
@@ -912,6 +963,22 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   .form-card{ outline:none; }
 }
 
+/* En pantallas tactiles, todo lo que se pulsa mide al menos
+   44 px de alto. Es la medida que piden las guias de Apple y
+   de Android: por debajo, el dedo falla. Los .btn-sm de las
+   tablas del panel median 32 px. */
+@media (pointer:coarse){
+  .btn, .btn-sm, .filter-btn, .navitem, .nav-sesion, .btn-carrito{
+    min-height:44px;
+  }
+  .btn, .btn-sm, .filter-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav-sesion, .navitem{ display:flex; align-items:center; }
+}
+
 @media (prefers-reduced-motion: reduce){
   *{ transition:none !important; animation:none !important; }
 }
@@ -924,7 +991,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
    ========================================================= */
 .nav-usuario{ gap:9px; line-height:1.2; }
 .nav-usuario small{
-  font-size:0.56rem;
+  font-size:0.68rem;
   letter-spacing:0.16em;
   color:var(--acento);
 }
@@ -979,7 +1046,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   padding:14px 24px;
   border-top:1px solid var(--borde);
   font-family:var(--fuente-titulo);
-  font-size:0.6rem;
+  font-size:0.68rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
@@ -990,3 +1057,161 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 
 /* El estado vacio puede llevar un boton debajo del texto */
 .empty-state p{ margin-bottom:22px; }
+
+/* Un rombo sobre el mensaje: el vacio tambien es parte del
+   reino, no una pagina rota. */
+.empty-state::before{
+  content:"";
+  display:block;
+  width:34px; height:34px;
+  margin:0 auto 24px;
+  border:1px solid var(--acento);
+  transform:rotate(45deg);
+  opacity:.6;
+}
+
+/* El contador del carrito late un instante al cambiar, para
+   que se note que algo entro. La animacion la dispara React
+   al cambiar la `key` del span. */
+@keyframes latir {
+  0%  { transform:scale(1); }
+  40% { transform:scale(1.45); background:var(--acento); }
+  100%{ transform:scale(1); }
+}
+.cart-count{ animation:latir .45s ease-out; }
+@media (prefers-reduced-motion: reduce){
+  .cart-count{ animation:none; }
+}
+
+
+/* =========================================================
+   15. AMBIENTE DE LA REGION  (mejora visual del Hito 4)
+   ---------------------------------------------------------
+   Una capa de particulas muy lentas detras de todo, distinta
+   en cada region: polvo en Moria, motas doradas en Lothlorien,
+   chispas de forja en Erebor, ceniza en Orthanc, estrellas en
+   Rivendel.
+
+   COMO ESTA HECHO
+   Sin librerias ni imagenes: dos pseudo-elementos sobre el
+   <body> con degradados radiales repetidos, que se mueven con
+   @keyframes. Pesa cero y no da trabajo al navegador.
+
+   TRES REGLAS QUE SE RESPETAN
+     1. pointer-events:none  -> nunca estorba a un clic
+     2. z-index:-1           -> siempre detras del contenido
+     3. prefers-reduced-motion -> quien desactivo las
+        animaciones en su sistema no ve nada en movimiento
+
+   Y una cuarta, de criterio: en el panel NO hay ambiente. Ahi
+   se trabaja con tablas, no se contempla el paisaje.
+   ========================================================= */
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:-20% 0 -20% 0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:0;                      /* apagado salvo donde se encienda */
+  transition:opacity .6s;
+}
+
+/* Las dos capas van a distinta velocidad: la de atras mas
+   lenta, para dar sensacion de profundidad. */
+body::before{ animation:ambiente-lento 90s linear infinite; }
+body::after { animation:ambiente-rapido 55s linear infinite; }
+
+@keyframes ambiente-lento {
+  from{ transform:translate3d(0, 0, 0); }
+  to  { transform:translate3d(-40px, 22%, 0); }
+}
+@keyframes ambiente-rapido {
+  from{ transform:translate3d(0, 0, 0); }
+  to  { transform:translate3d(30px, -22%, 0); }
+}
+
+/* --- Rivendel: estrellas quietas que titilan --- */
+.region-rivendel::before{
+  opacity:.5;
+  background-image:
+    radial-gradient(1.4px 1.4px at 18% 22%, rgba(195,203,204,0.9), transparent),
+    radial-gradient(1.2px 1.2px at 63% 14%, rgba(159,184,208,0.8), transparent),
+    radial-gradient(1.6px 1.6px at 81% 44%, rgba(232,217,181,0.7), transparent),
+    radial-gradient(1.1px 1.1px at 34% 67%, rgba(195,203,204,0.7), transparent),
+    radial-gradient(1.3px 1.3px at 91% 78%, rgba(159,184,208,0.6), transparent);
+  background-size:520px 520px;
+  animation:titilar 7s ease-in-out infinite alternate;
+}
+@keyframes titilar { from{ opacity:.28; } to{ opacity:.55; } }
+
+/* --- Erebor: chispas de forja que suben --- */
+.region-erebor::after{
+  opacity:.4;
+  background-image:
+    radial-gradient(1.8px 1.8px at 24% 80%, rgba(229,196,90,0.95), transparent),
+    radial-gradient(1.4px 1.4px at 58% 92%, rgba(201,162,39,0.85), transparent),
+    radial-gradient(2px 2px at 86% 70%, rgba(242,154,36,0.7), transparent);
+  background-size:420px 420px;
+}
+
+/* --- Moria: polvo que cae en la oscuridad --- */
+.region-moria::before{
+  opacity:.45;
+  background-image:
+    radial-gradient(1.5px 1.5px at 30% 10%, rgba(159,184,208,0.75), transparent),
+    radial-gradient(1.2px 1.2px at 70% 30%, rgba(195,203,204,0.6), transparent),
+    radial-gradient(1.8px 1.8px at 12% 60%, rgba(159,184,208,0.5), transparent);
+  background-size:380px 380px;
+  animation:caer 40s linear infinite;
+}
+@keyframes caer {
+  from{ transform:translate3d(0, -20%, 0); }
+  to  { transform:translate3d(-20px, 20%, 0); }
+}
+
+/* --- Lothlorien: motas doradas flotando --- */
+.region-lothlorien::after{
+  opacity:.45;
+  background-image:
+    radial-gradient(2.2px 2.2px at 20% 40%, rgba(242,154,36,0.8), transparent),
+    radial-gradient(1.6px 1.6px at 64% 20%, rgba(229,196,90,0.7), transparent),
+    radial-gradient(1.9px 1.9px at 88% 62%, rgba(242,154,36,0.55), transparent);
+  background-size:460px 460px;
+}
+
+/* --- Bree: lluvia fina en el camino --- */
+.region-bree::before{
+  opacity:.3;
+  background-image:
+    radial-gradient(1.2px 1.2px at 25% 15%, rgba(229,196,90,0.6), transparent),
+    radial-gradient(1px 1px at 75% 50%, rgba(232,217,181,0.5), transparent);
+  background-size:340px 340px;
+  animation:caer 26s linear infinite;
+}
+
+/* --- La Comarca: polen en el aire --- */
+.region-comarca::after{
+  opacity:.35;
+  background-image:
+    radial-gradient(2px 2px at 35% 55%, rgba(63,140,94,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 78% 28%, rgba(232,217,181,0.5), transparent);
+  background-size:500px 500px;
+}
+
+/* --- Orthanc: ceniza. Solo fuera del panel --- */
+.region-orthanc:not(:has(.admin-layout))::before{
+  opacity:.4;
+  background-image:
+    radial-gradient(1.8px 1.8px at 22% 18%, rgba(196,71,47,0.6), transparent),
+    radial-gradient(1.4px 1.4px at 68% 48%, rgba(164,152,119,0.5), transparent);
+  background-size:400px 400px;
+  animation:caer 34s linear infinite;
+}
+
+/* Quien desactivo las animaciones en su sistema ve el fondo
+   quieto, sin una sola particula en movimiento. */
+@media (prefers-reduced-motion: reduce){
+  body::before, body::after{ animation:none !important; }
+}

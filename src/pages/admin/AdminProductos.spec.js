@@ -31,6 +31,12 @@ const fila = (nombre) => screen.getByText(nombre).closest('tr')
 const pulsarEn = (nombre, boton) =>
   fireEvent.click(within(fila(nombre)).getByRole('button', { name: boton }))
 
+/* Borrar son dos pasos: pulsar Eliminar y confirmar */
+const borrarDeVerdad = (nombre) => {
+  pulsarEn(nombre, 'Eliminar')
+  fireEvent.click(screen.getByRole('button', { name: 'Si, eliminar' }))
+}
+
 const escribir = (etiqueta, valor) =>
   fireEvent.change(screen.getByLabelText(etiqueta), { target: { value: valor } })
 
@@ -174,8 +180,17 @@ describe('AdminProductos', () => {
       escribir(/^Nivel requerido/, '1')
       fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
-      pulsarEn('Piedra de Afilar', 'Eliminar')
+      borrarDeVerdad('Piedra de Afilar')
       expect(screen.getByText('Piedra de Afilar eliminado.')).toBeTruthy()
+      expect(listarProductos().length).toBe(8)
+    })
+
+    it('pregunta antes de borrar y respeta el Cancelar', () => {
+      dibujar()
+      pulsarEn('Lembas', 'Eliminar')
+
+      expect(screen.getByText('Confirmar')).toBeTruthy()
+      fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
       expect(listarProductos().length).toBe(8)
     })
 
@@ -185,7 +200,7 @@ describe('AdminProductos', () => {
       agregarProducto(venta.ventaId, 6, 1)   // Lembas
 
       dibujar()
-      pulsarEn('Lembas', 'Eliminar')
+      borrarDeVerdad('Lembas')
 
       expect(screen.getByText(/Dejalo INACTIVO/)).toBeTruthy()
       expect(obtenerProducto(6)).not.toBeNull()
@@ -195,7 +210,7 @@ describe('AdminProductos', () => {
       reponerStock(1, 5)
 
       dibujar()
-      pulsarEn('Espada Dardo', 'Eliminar')
+      borrarDeVerdad('Espada Dardo')
 
       expect(screen.getByText(/Dejalo INACTIVO/)).toBeTruthy()
     })
