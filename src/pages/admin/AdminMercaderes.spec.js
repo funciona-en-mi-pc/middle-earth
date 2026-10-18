@@ -33,6 +33,17 @@ const escribir = (etiqueta, valor) =>
   fireEvent.change(screen.getByLabelText(etiqueta), { target: { value: valor } })
 const guardar = () => fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
+/* Borrar ahora son dos pasos: pulsar Eliminar en la fila y
+   confirmar en el dialogo. */
+const confirmarBorrado = () =>
+  fireEvent.click(screen.getByRole('button', { name: 'Si, eliminar' }))
+
+const borrarDeVerdad = (nombre) => {
+  pulsarEn(nombre, 'Eliminar')
+  confirmarBorrado()
+}
+
+
 function rellenarNuevo(cargo = 'VENDEDOR') {
   fireEvent.click(screen.getByRole('button', { name: 'Nuevo mercader' }))
   escribir(/^Nombre/, 'Barliman')
@@ -159,7 +170,7 @@ describe('AdminMercaderes', () => {
 
     it('no deja borrarlo', () => {
       dibujar()
-      pulsarEn('Elrond', 'Eliminar')
+      borrarDeVerdad('Elrond')
 
       expect(screen.getByText(AVISO)).toBeTruthy()
       expect(listarMercaderes().length).toBe(4)
@@ -176,9 +187,17 @@ describe('AdminMercaderes', () => {
 
   /* REGLA 9 */
   describe('eliminar', () => {
-    it('borra a quien no atendio ventas', () => {
+    it('si se cancela, no borra', () => {
       dibujar()
       pulsarEn('Grimbold Martillo', 'Eliminar')
+      fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }))
+
+      expect(listarMercaderes().length).toBe(4)
+    })
+
+    it('borra a quien no atendio ventas', () => {
+      dibujar()
+      borrarDeVerdad('Grimbold Martillo')
 
       expect(screen.getByText('Grimbold Martillo eliminado.')).toBeTruthy()
       expect(listarMercaderes().length).toBe(3)
@@ -191,7 +210,7 @@ describe('AdminMercaderes', () => {
       ])
 
       dibujar()
-      pulsarEn('Cebadilla Mantecona', 'Eliminar')
+      borrarDeVerdad('Cebadilla Mantecona')
 
       expect(screen.getByText(/Dejalo INACTIVO/)).toBeTruthy()
       expect(obtenerMercader(1)).not.toBeNull()

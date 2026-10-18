@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form'
 import Modal from 'react-bootstrap/Modal'
 import Table from 'react-bootstrap/Table'
 
+import ConfirmarBorrado from '../../components/ConfirmarBorrado.jsx'
 import { useAuth } from '../../context/useAuth.js'
 import {
   actualizarJugador,
@@ -53,6 +54,7 @@ function AdminJugadores() {
   const puedeTocar = usuario.cargo === 'ADMINISTRADOR'
 
   const [alerta, setAlerta] = useState(null)
+  const [aBorrar, setABorrar] = useState(null)   // null = nadie en la mira
   const [editando, setEditando] = useState(null)   // null = modal cerrado
   const [campos, setCampos] = useState(VACIO)
   const [errores, setErrores] = useState(VACIO)
@@ -120,7 +122,12 @@ function AdminJugadores() {
   }
 
   /* REGLA 9: si tiene ventas, no se borra */
-  const borrar = (jugador) => {
+  /* Borrar es en dos pasos: primero se pregunta, y solo
+     despues se borra. Ver ConfirmarBorrado. */
+  const borrar = () => {
+    const jugador = aBorrar
+    setABorrar(null)
+
     const intento = eliminarJugador(jugador.jugadorId)
     setAlerta(intento.ok
       ? { tipo: 'success', texto: `${jugador.nombre} eliminado.` }
@@ -191,7 +198,7 @@ function AdminJugadores() {
                     <Button size="sm" className="btn-linea" onClick={() => cambiarEstado(jugador)}>
                       {jugador.estado === 'ACTIVO' ? 'Inactivar' : 'Activar'}
                     </Button>
-                    <Button size="sm" className="btn-linea" onClick={() => borrar(jugador)}>
+                    <Button size="sm" className="btn-linea" onClick={() => setABorrar(jugador)}>
                       Eliminar
                     </Button>
                   </td>
@@ -201,6 +208,14 @@ function AdminJugadores() {
           </tbody>
         </Table>
       </div>
+
+      <ConfirmarBorrado
+        mostrar={aBorrar !== null}
+        nombre={aBorrar?.nombre}
+        queEs="el jugador"
+        onCancelar={() => setABorrar(null)}
+        onConfirmar={borrar}
+      />
 
       <Modal show={editando !== null} onHide={() => setEditando(null)} centered>
         <Modal.Header closeButton closeVariant="white">
