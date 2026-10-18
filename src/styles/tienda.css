@@ -1,0 +1,66 @@
+/* =========================================================
+   MIDDLE-EARTH: THE LOST AGE
+   tienda.css — Estilos de la portada y de las fichas
+   ---------------------------------------------------------
+   DUENO: Jose
+
+   POR QUE UN ARCHIVO APARTE Y NO styles.css
+   styles.css lo usamos los dos. Si cada uno agrega al final,
+   git no sabe cual linea es de quien y el merge choca. Con un
+   archivo por persona, eso no pasa nunca.
+
+   Se carga desde Inicio.jsx, que App.jsx siempre importa, asi
+   que estas clases estan disponibles en toda la aplicacion.
+   ========================================================= */
+
+
+/* --- Portada --- */
+.portada{
+  padding:clamp(40px, 6vw, 80px) 0 clamp(20px, 3vw, 40px);
+}
+.portada h1{ margin-bottom:6px; }
+
+/* Marco de la ilustracion: doble filete de oro, como los
+   mapas antiguos. outline-offset dibuja el segundo por fuera
+   sin necesidad de otro elemento. */
+.portada-marco{
+  border:1px solid var(--borde);
+  outline:1px solid var(--borde);
+  outline-offset:7px;
+  border-radius:var(--radio);
+  overflow:hidden;
+  box-shadow:var(--sombra);
+}
+.portada-marco img{
+  width:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+}
+
+/* En el celular el marco de fuera se sale de la pantalla */
+@media (max-width:991.98px){
+  .portada-marco{ outline:none; }
+}
+
+
+/* --- Aviso de nivel en la ficha (regla 3 del SQL) --- */
+.item-aviso{
+  margin:0;
+  font-family:var(--fuente-titulo);
+  font-size:0.6rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--rojo-claro);
+}
+
+
+/* --- Las categorias de la portada usan .kpi como enlace --- */
+a.kpi{
+  color:var(--marfil);
+  transition:border-color .18s, background .18s;
+}
+a.kpi:hover{
+  border-color:var(--acento);
+  background:rgba(var(--acento-rgb),0.07);
+}
+a.kpi .n{ font-size:1.25rem; }
