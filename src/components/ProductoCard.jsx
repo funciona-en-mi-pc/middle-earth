@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 
+import EmblemaCategoria from './EmblemaCategoria.jsx'
 import { nombreCategoria, rutaImagen } from '../services/productoService.js'
 import { formatearOro } from '../utils/formatos.js'
+import { claseRareza, nombreRareza } from '../utils/rareza.js'
 
 /* =========================================================
    ProductoCard — la ficha de un objeto del catalogo
@@ -17,8 +19,18 @@ import { formatearOro } from '../utils/formatos.js'
      nivelJugador ... opcional. Si se pasa y no alcanza, la
                       ficha avisa (regla 3 del SQL)
 
-   Las clases vienen de styles.css (seccion 7): item-card,
-   item-thumb, item-name, item-meta, item-price y coin.
+   EL FILO DE ARRIBA LLEVA EL COLOR DE LA RAREZA
+   La rareza no esta en el SQL: se deriva del nivel requerido
+   (ver utils/rareza.js). Asi se recupera el detalle visual
+   del mockup sin inventar una columna.
+
+   LA IMAGEN Y EL SELLO
+   Si el producto tiene foto, se muestra. Encima va siempre el
+   sello heraldico de su categoria, en el color de la rareza:
+   es lo que de verdad dice que es el objeto, porque cuatro de
+   las ocho fotos vienen heredadas del mockup y no calzan.
+
+   Las clases vienen de styles.css (seccion 7).
    ========================================================= */
 
 function ProductoCard({ producto, nivelJugador }) {
@@ -26,15 +38,22 @@ function ProductoCard({ producto, nivelJugador }) {
   const sinNivel = nivelJugador !== undefined && nivelJugador < producto.nivelRequerido
 
   return (
-    <article className="item-card">
+    <article className={`item-card ${claseRareza(producto)}`}>
 
       <Link to={`/productos/${producto.productoId}`} className="item-thumb">
         {/* loading="lazy" evita descargar las imagenes que
             todavia no se ven al bajar por el catalogo. */}
-        <img src={rutaImagen(producto)} alt={producto.nombre} loading="lazy" />
+        <img src={rutaImagen(producto)} alt="" loading="lazy" />
+        <EmblemaCategoria
+          categoriaId={producto.categoriaId}
+          titulo={`${nombreCategoria(producto.categoriaId)} · ${nombreRareza(producto)}`}
+        />
       </Link>
 
-      <span className="item-categoria">{nombreCategoria(producto.categoriaId)}</span>
+      <span className="item-categoria">
+        {nombreCategoria(producto.categoriaId)}
+        <small>{nombreRareza(producto)}</small>
+      </span>
 
       <Link to={`/productos/${producto.productoId}`}>
         <h3 className="item-name">{producto.nombre}</h3>
