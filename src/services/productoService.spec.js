@@ -1,5 +1,7 @@
 import {
+  actualizarProducto,
   estaAgotado,
+  inactivarProducto,
   listarCategorias,
   listarProductos,
   nombreCategoria,
@@ -7,6 +9,7 @@ import {
   productosDestacados,
   rutaImagen,
 } from './productoService.js'
+import { listarAuditoria } from './auditoriaService.js'
 import { CLAVES, guardar, leer, reiniciarDatos } from './storage.js'
 
 /* =========================================================
@@ -118,6 +121,48 @@ describe('productoService', () => {
     it('arma la ruta de la imagen', () => {
       expect(rutaImagen(obtenerProducto(1))).toBe('/img/productos/1.jpg')
       expect(rutaImagen(null)).toBe('')
+    })
+  })
+
+  /* El atajo para dar de baja un producto. Pasa por
+     actualizarProducto a proposito, para que el cambio de
+     estado quede auditado (regla 10). */
+  describe('inactivarProducto', () => {
+    it('lo deja INACTIVO', () => {
+      expect(inactivarProducto(1).ok).toBe(true)
+      expect(obtenerProducto(1).estado).toBe('INACTIVO')
+    })
+
+    it('el cambio queda auditado', () => {
+      inactivarProducto(1)
+
+      const auditoria = listarAuditoria({ productoId: 1, campo: 'estado' })
+      expect(auditoria.length).toBe(1)
+      expect(auditoria[0].valorNuevo).toBe('INACTIVO')
+    })
+
+    /* REGLA 2: un producto INACTIVO sale de la tienda */
+    it('deja de aparecer en el catalogo de la tienda', () => {
+      inactivarProducto(1)
+      expect(listarProductos({ soloActivos: true }).length).toBe(7)
+    })
+
+    it('avisa si el producto no existe', () => {
+      expect(inactivarProducto(999).error).toBe('Producto inexistente.')
+    })
+  })
+
+  /* El stock se protege: aunque llegue en los cambios, se
+     ignora. Solo inventarioService lo mueve. */
+  describe('actualizarProducto no toca el stock', () => {
+    it('ignora el stock aunque se lo manden', () => {
+      actualizarProducto(1, { precio: 1700, stock: 999 })
+      expect(obtenerProducto(1).stock).toBe(5)
+    })
+
+    it('y ese intento no queda en la auditoria', () => {
+      actualizarProducto(1, { stock: 999 })
+      expect(listarAuditoria().length).toBe(0)
     })
   })
 })
