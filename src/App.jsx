@@ -1,121 +1,78 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Route, Routes } from 'react-router-dom'
+
+import AdminLayout from './layouts/AdminLayout.jsx'
+import TiendaLayout from './layouts/TiendaLayout.jsx'
+
+import Carrito from './pages/Carrito.jsx'
+import Catalogo from './pages/Catalogo.jsx'
+import DetalleProducto from './pages/DetalleProducto.jsx'
+import Inicio from './pages/Inicio.jsx'
+import Login from './pages/Login.jsx'
+import MisPedidos from './pages/MisPedidos.jsx'
+import NoEncontrado from './pages/NoEncontrado.jsx'
+import Perfil from './pages/Perfil.jsx'
+import Registro from './pages/Registro.jsx'
+
+import AdminAuditoria from './pages/admin/AdminAuditoria.jsx'
+import AdminJugadores from './pages/admin/AdminJugadores.jsx'
+import AdminMercaderes from './pages/admin/AdminMercaderes.jsx'
+import AdminMovimientos from './pages/admin/AdminMovimientos.jsx'
+import AdminPedidos from './pages/admin/AdminPedidos.jsx'
+import AdminProductos from './pages/admin/AdminProductos.jsx'
+import Dashboard from './pages/admin/Dashboard.jsx'
+
+/* =========================================================
+   App — el mapa de la aplicacion
+   ---------------------------------------------------------
+   ARCHIVO COMPARTIDO: solo se toca en las reuniones de hito.
+   Todas las rutas y todas las paginas ya estan creadas, asi
+   cada uno rellena su archivo sin pasar por aqui.
+
+   COMO SE LEE
+     <Routes> ......... la lista de rutas. Solo una gana.
+     <Route element>... una ruta sin `path` que solo aporta
+                        marco: las de dentro se dibujan en su
+                        <Outlet />. Asi todas las paginas de la
+                        tienda comparten navbar y footer.
+     path="/admin" .... las rutas de dentro son relativas:
+                        "productos" es /admin/productos.
+     index ............ la pagina de /admin exacto.
+     :id .............. parte variable de la URL. La pagina la
+                        lee con useParams().
+     path="*" ......... comodin: si ninguna ruta calzo, el 404.
+                        Va al final, porque gana la primera
+                        que coincide.
+   ========================================================= */
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Routes>
 
-      <div className="ticks"></div>
+      {/* --- Tienda --- */}
+      <Route element={<TiendaLayout />}>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/productos/:id" element={<DetalleProducto />} />
+        <Route path="/carrito" element={<Carrito />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/mis-pedidos" element={<MisPedidos />} />
+        <Route path="*" element={<NoEncontrado />} />
+      </Route>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {/* --- Panel de administracion --- */}
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="productos" element={<AdminProductos />} />
+        <Route path="movimientos" element={<AdminMovimientos />} />
+        <Route path="auditoria" element={<AdminAuditoria />} />
+        <Route path="jugadores" element={<AdminJugadores />} />
+        <Route path="mercaderes" element={<AdminMercaderes />} />
+        <Route path="pedidos" element={<AdminPedidos />} />
+      </Route>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    </Routes>
   )
 }
 
