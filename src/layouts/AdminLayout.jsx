@@ -4,6 +4,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 
 import logo from '../assets/img/logo.png'
+import { useTituloDeRuta } from '../utils/useTituloDeRuta.js'
 
 /* =========================================================
    AdminLayout — el marco del panel de administracion
@@ -76,6 +77,8 @@ function Menu({ onNavegar }) {
 }
 
 function AdminLayout() {
+  useTituloDeRuta()
+
   const [cajonAbierto, setCajonAbierto] = useState(false)
   const cerrarCajon = () => setCajonAbierto(false)
 
