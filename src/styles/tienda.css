@@ -56,10 +56,11 @@
 .item-aviso{
   margin:0;
   font-family:var(--fuente-titulo);
-  font-size:0.6rem;
+  font-size:0.8rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--rojo-claro);
+  font-weight:500;
 }
 
 
@@ -80,7 +81,7 @@ a.kpi .n{ font-size:1.25rem; }
    ========================================================= */
 .migas{
   margin:28px 0 0;
-  font-size:0.62rem;
+  font-size:0.84rem;
   color:var(--marfil-tenue);
 }
 .migas a{ color:var(--acento); }
@@ -97,6 +98,12 @@ a.kpi .n{ font-size:1.25rem; }
   width:100%;
   aspect-ratio:4/3;
   object-fit:cover;
+}
+
+/* En una sola columna el arte 4:3 a todo el ancho media mas que
+   la pantalla y dejaba el precio y el boton de compra fuera de vista. */
+@media (max-width: 991.98px){
+  .detalle-marco img{ aspect-ratio:auto; height:38vh; min-height:180px; }
 }
 
 .detalle-precio{
@@ -123,11 +130,11 @@ a.kpi .n{ font-size:1.25rem; }
 }
 .detalle-datos dt{
   font-family:var(--fuente-titulo);
-  font-size:0.56rem;
+  font-size:0.8rem;
   letter-spacing:0.18em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
-  font-weight:400;
+  font-weight:500;
 }
 .detalle-datos dd{
   margin:6px 0 0;
@@ -161,10 +168,11 @@ a.kpi .n{ font-size:1.25rem; }
 .carrito-items{
   display:block;
   font-family:var(--fuente-titulo);
-  font-size:0.6rem;
+  font-size:0.8rem;
   letter-spacing:0.16em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
+  font-weight:500;
 }
 .carrito-total{
   display:flex; align-items:center; gap:10px;

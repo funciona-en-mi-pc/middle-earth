@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { startTransition, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { AuthContext } from './AuthContext.js'
 
@@ -28,4 +29,20 @@ export function useAuth() {
   }
 
   return valor
+}
+
+
+/* Cerrar sesion y volver a Inicio, para la Navbar y el panel.
+   Las dos cosas van en la misma transicion: React Router navega
+   como transicion y logout() no, asi que la sesion se cerraba
+   primero y, si estabas en una pagina protegida, RutaProtegida
+   te mandaba al login con "Inicia sesion para continuar". */
+export function useSalir() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  return () => startTransition(() => {
+    logout()
+    navigate('/')
+  })
 }
