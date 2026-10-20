@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 
-import EmblemaCategoria from './EmblemaCategoria.jsx'
 import { nombreCategoria, rutaImagen } from '../services/productoService.js'
 import { formatearOro } from '../utils/formatos.js'
 import { ofertaDe, precioAntes } from '../utils/oferta.js'
@@ -32,11 +31,11 @@ import { claseRareza, nombreRareza } from '../utils/rareza.js'
    (regla 8). Lo tachado es el precio ANTERIOR, reconstruido.
    Asi la ficha y la boleta nunca se contradicen.
 
-   LA IMAGEN Y EL SELLO
-   Si el producto tiene foto, se muestra. Encima va siempre el
-   sello heraldico de su categoria, en el color de la rareza:
-   es lo que de verdad dice que es el objeto, porque cuatro de
-   las ocho fotos vienen heredadas del mockup y no calzan.
+   LA IMAGEN
+   Cada objeto tiene su ilustracion en vitral, hecha en
+   Leonardo. Antes iba atenuada con el sello de la categoria
+   encima, porque las fotos del mockup no calzaban con los
+   objetos; con arte propio, el sello sobraba.
 
    Las clases vienen de styles.css (seccion 7).
    ========================================================= */
@@ -54,10 +53,6 @@ function ProductoCard({ producto, nivelJugador }) {
         {/* loading="lazy" evita descargar las imagenes que
             todavia no se ven al bajar por el catalogo. */}
         <img src={rutaImagen(producto)} alt="" loading="lazy" />
-        <EmblemaCategoria
-          categoriaId={producto.categoriaId}
-          titulo={`${nombreCategoria(producto.categoriaId)} · ${nombreRareza(producto)}`}
-        />
         {descuento > 0 && <span className="item-oferta">-{descuento}%</span>}
       </Link>
 

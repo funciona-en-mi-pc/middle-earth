@@ -96,8 +96,9 @@ a.kpi .n{ font-size:1.25rem; }
 }
 .detalle-marco img{
   width:100%;
-  aspect-ratio:4/3;
+  aspect-ratio:16/9;      /* la ilustracion completa, como se dibujo */
   object-fit:cover;
+  object-position:18% center;
 }
 
 /* En una sola columna el arte 4:3 a todo el ancho media mas que

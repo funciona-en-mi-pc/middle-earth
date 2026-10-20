@@ -480,6 +480,17 @@ img{ max-width:100%; display:block; }
   color:var(--obsidiana);
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.35);
 }
+/* <Button className="btn-oro"> tambien lleva .btn-primary, y
+   .btn:disabled de Bootstrap le ponia el borde azul de ese tema.
+   Deshabilitado queda en oro apagado, de su misma familia. */
+.btn-oro:disabled,
+.btn-oro.disabled{
+  background:rgba(201,162,39,0.18);
+  border-color:rgba(201,162,39,0.4);
+  color:var(--marfil-tenue);
+  box-shadow:none;
+  opacity:1;
+}
 .btn-oro:hover{
   background:linear-gradient(180deg, #F2D77E, var(--oro-claro));
   color:var(--obsidiana);
@@ -575,7 +586,11 @@ img{ max-width:100%; display:block; }
   width:100%;
   height:100%;
   object-fit:cover;
+  /* Las ilustraciones son 16:9 con el objeto a la izquierda. La
+     ficha es 4:3: se recorta de la derecha, no del objeto. */
+  object-position:18% center;
   display:block;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1);
 }
 .item-categoria{
   display:flex;
@@ -595,9 +610,8 @@ img{ max-width:100%; display:block; }
   color:color-mix(in srgb, var(--rareza, var(--marfil-tenue)) 56%, var(--marfil));
 }
 
-/* El sello heraldico, encima de la imagen. Lo dibuja
-   EmblemaCategoria en SVG: ver ese archivo para saber por
-   que no basta con la foto. */
+/* El sello heraldico de EmblemaCategoria. Hoy lo usan las
+   tarjetas de categoria; las de producto llevan su ilustracion. */
 .item-thumb{ position:relative; }
 .emblema{
   position:absolute;
@@ -607,9 +621,8 @@ img{ max-width:100%; display:block; }
   filter:drop-shadow(0 2px 6px rgba(0,0,0,0.85));
   opacity:.95;
 }
-/* La imagen se atenua para que el sello se lea encima */
-.item-thumb img{ opacity:.45; }
-.item-card:hover .item-thumb img{ opacity:.6; }
+/* Al pasar el raton, la ilustracion se acerca un poco */
+.item-card:hover .item-thumb img{ transform:scale(1.05); }
 .item-name{ font-size:1.05rem; margin:0; }
 .item-card a:hover .item-name{ color:var(--oro-claro); }
 .item-meta{
