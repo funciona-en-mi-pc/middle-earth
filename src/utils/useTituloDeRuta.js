@@ -24,8 +24,13 @@ import { useLocation } from 'react-router-dom'
 const TITULOS = {
   '/': 'Inicio',
   '/catalogo': 'Mercado',
+  '/categorias': 'Categorias',
+  '/ofertas': 'Ofertas',
   '/productos': 'Objeto',
   '/carrito': 'Carrito',
+  '/checkout': 'Pagar',
+  '/compra-exitosa': 'Compra realizada',
+  '/compra-fallida': 'Pago rechazado',
   '/login': 'Iniciar sesion',
   '/registro': 'Crear cuenta',
   '/perfil': 'Mi perfil',

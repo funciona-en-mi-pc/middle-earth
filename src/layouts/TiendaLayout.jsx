@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
+import { useArribaAlNavegar } from '../utils/useArribaAlNavegar.js'
 import { useTituloDeRuta } from '../utils/useTituloDeRuta.js'
 
 import Footer from '../components/Footer.jsx'
@@ -22,6 +23,7 @@ import Navbar from '../components/Navbar.jsx'
 
 function TiendaLayout() {
   useTituloDeRuta()
+  useArribaAlNavegar()
 
   return (
     <div className="pagina">

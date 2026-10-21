@@ -45,7 +45,10 @@
   /* ---- Tonos derivados ---- */
   --hierro-claro:#363831;
   --hierro-oscuro:#161815;
-  --marfil-tenue:#A49877;
+  /* El texto secundario. Era #A49877 y daba 4.99 sobre las
+     tarjetas: pasaba el minimo de 4.5 por un pelo y a 12px
+     cansaba. Este llega a 7 (nivel AAA), mismo tono pergamino. */
+  --marfil-tenue:#C2B592;
   --verde-claro:#3F8C5E;
   --rojo-claro:#C4472F;
 
@@ -115,6 +118,24 @@
 .region-bree        { --acento:var(--oro-claro);   --acento-rgb:229,196,90; }
 .region-orthanc     { --acento:var(--rojo-claro);  --acento-rgb:196,71,47; }
 
+/* El acento esta pensado para bordes, que piden 3:1. Usado como
+   texto chico pide 4.5:1, y el rojo del panel daba 2.92. Mezclado
+   con marfil queda sobre 5 en las nueve regiones. Va en body
+   porque ahi se pone la clase region-*. */
+body{
+  --acento-texto:color-mix(in srgb, var(--acento) 56%, var(--marfil));
+  transition:--acento .9s ease;
+}
+
+/* --acento registrado como color: asi el navegador lo puede
+   animar. Al cambiar de pagina, el color de la region se funde
+   en vez de saltar: bordes, cinta, sello y luz de fondo. */
+@property --acento{
+  syntax:'<color>';
+  inherits:true;
+  initial-value:#C9A227;
+}
+
 
 /* =========================================================
    3. BASE
@@ -123,8 +144,8 @@ body{
   background-color:var(--obsidiana);
   /* Luz de la region arriba, tierra abajo */
   background-image:
-    radial-gradient(1200px 520px at 12% -8%,  rgba(var(--acento-rgb),0.13), transparent 70%),
-    radial-gradient(900px 480px at 92% 104%, rgba(var(--acento-rgb),0.08), transparent 70%),
+    radial-gradient(1200px 520px at 12% -8%,  color-mix(in srgb, var(--acento) 16%, transparent), transparent 70%),
+    radial-gradient(900px 480px at 92% 104%, color-mix(in srgb, var(--acento) 10%, transparent), transparent 70%),
     radial-gradient(700px 400px at 50% 40%,  rgba(201,162,39,0.04),        transparent 70%);
   background-attachment:fixed;
   -webkit-font-smoothing:antialiased;
@@ -202,6 +223,26 @@ img{ max-width:100%; display:block; }
   transition:opacity .2s;
 }
 .marca:hover .marca-sello{ opacity:.8; }
+
+/* --- El sello: oro afuera, el color de la region adentro --- */
+.sello{ display:block; flex-shrink:0; overflow:visible; }
+.sello path{ fill:none; stroke-linejoin:miter; }
+.sello-exterior{ stroke:var(--oro); stroke-width:2.2; }
+.sello-interior{
+  stroke:var(--acento);
+  stroke-width:1.6;
+  transform-box:fill-box;
+  transform-origin:center;
+  transition:transform .7s cubic-bezier(.2,.8,.2,1);
+  animation:sello-latir 4.5s ease-in-out infinite;
+}
+@keyframes sello-latir{
+  0%,100%{ filter:drop-shadow(0 0 1.5px var(--acento)); }
+  50%    { filter:drop-shadow(0 0 5px var(--acento)); }
+}
+/* Al pasar el raton, el rombo de adentro da un cuarto de vuelta */
+.marca:hover .sello-interior,
+.rail-brand:hover .sello-interior{ transform:rotate(90deg); }
 .marca-texto{
   font-family:var(--fuente-marca);
   font-size:1.05rem;
@@ -216,13 +257,14 @@ img{ max-width:100%; display:block; }
 .navbar-nav{ gap:4px; }
 .site-nav .nav-link{
   font-family:var(--fuente-titulo);
-  font-size:0.76rem;
+  font-size:0.86rem;
   letter-spacing:0.16em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
   padding:10px 14px;
   position:relative;
   transition:color .18s;
+  font-weight:500;
 }
 .site-nav .nav-link:hover{ color:var(--marfil); }
 .site-nav .nav-link.active{ color:var(--marfil); }
@@ -241,11 +283,12 @@ img{ max-width:100%; display:block; }
   flex-wrap:wrap;
 }
 .nav-sesion{
-  font-size:0.68rem;
+  font-size:0.82rem;
   color:var(--marfil-tenue);
   background:none;
   border:none;
   padding:0;
+  font-weight:500;
 }
 .nav-sesion:hover{ color:var(--oro-claro); }
 
@@ -257,10 +300,11 @@ img{ max-width:100%; display:block; }
   background:rgba(232,217,181,0.03);
   color:var(--marfil);
   font-family:var(--fuente-titulo);
-  font-size:0.7rem;
+  font-size:0.82rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
   transition:border-color .18s, color .18s;
+  font-weight:500;
 }
 .btn-carrito:hover{ border-color:var(--acento); color:var(--oro-claro); }
 .cart-count{
@@ -280,7 +324,7 @@ img{ max-width:100%; display:block; }
 /* Nombre de quien tiene la sesion abierta */
 .nav-usuario{
   display:inline-flex; align-items:center; gap:9px;
-  font-size:0.68rem;
+  font-size:0.8rem;
   color:var(--marfil);
 }
 .nav-usuario-marca{
@@ -288,8 +332,8 @@ img{ max-width:100%; display:block; }
   display:inline-flex; align-items:center; justify-content:center;
   border:1px solid var(--acento);
   border-radius:50%;
-  color:var(--acento);
-  font-size:0.7rem;
+  color:var(--acento-texto);
+  font-size:0.8rem;
   letter-spacing:0;
 }
 
@@ -305,8 +349,9 @@ img{ max-width:100%; display:block; }
 }
 .cinta-nombre{
   display:flex; align-items:center; gap:10px;
-  font-size:0.72rem;
-  color:var(--acento);
+  font-size:0.82rem;
+  color:var(--acento-texto);
+  font-weight:500;
 }
 /* Rombo que precede al nombre de la region */
 .cinta-nombre::before{
@@ -316,7 +361,7 @@ img{ max-width:100%; display:block; }
   transform:rotate(45deg);
 }
 .cinta-sub{
-  font-size:0.66rem;
+  font-size:0.86rem;
   letter-spacing:0.12em;
   color:var(--marfil-tenue);
   text-transform:none;
@@ -329,10 +374,11 @@ img{ max-width:100%; display:block; }
    5. TITULOS, ROTULOS Y ORNAMENTOS
    ========================================================= */
 .eyebrow{
-  font-size:0.68rem;
-  letter-spacing:0.3em;
-  color:var(--acento);
+  font-size:0.8rem;
+  letter-spacing:0.2em;
+  color:var(--acento-texto);
   margin:0 0 16px;
+  font-weight:500;
 }
 .eyebrow::after{
   content:"";
@@ -379,7 +425,7 @@ img{ max-width:100%; display:block; }
   padding:0 74px;
   font-size:0.8rem;
   line-height:1;
-  color:var(--acento);
+  color:var(--acento-texto);
   background:
     linear-gradient(90deg, transparent, var(--acento)) left  center/62px 1px no-repeat,
     linear-gradient(90deg, var(--acento), transparent) right center/62px 1px no-repeat;
@@ -415,14 +461,15 @@ img{ max-width:100%; display:block; }
 .btn{
   --bs-btn-focus-box-shadow:none;
   font-family:var(--fuente-titulo);
-  font-size:0.76rem;
-  letter-spacing:0.16em;
+  font-size:0.84rem;
+  letter-spacing:0.12em;
   text-transform:uppercase;
   font-style:normal;
   padding:13px 30px;
   border-radius:var(--radio);
   border:1px solid transparent;
   transition:background .18s, color .18s, border-color .18s, transform .18s;
+  font-weight:500;
 }
 .btn:active{ transform:translateY(1px); }
 
@@ -432,6 +479,17 @@ img{ max-width:100%; display:block; }
   border-color:var(--oro);
   color:var(--obsidiana);
   box-shadow:inset 0 1px 0 rgba(255,255,255,0.35);
+}
+/* <Button className="btn-oro"> tambien lleva .btn-primary, y
+   .btn:disabled de Bootstrap le ponia el borde azul de ese tema.
+   Deshabilitado queda en oro apagado, de su misma familia. */
+.btn-oro:disabled,
+.btn-oro.disabled{
+  background:rgba(201,162,39,0.18);
+  border-color:rgba(201,162,39,0.4);
+  color:var(--marfil-tenue);
+  box-shadow:none;
+  opacity:1;
 }
 .btn-oro:hover{
   background:linear-gradient(180deg, #F2D77E, var(--oro-claro));
@@ -446,11 +504,11 @@ img{ max-width:100%; display:block; }
 }
 .btn-linea:hover{
   border-color:var(--acento);
-  color:var(--acento);
+  color:var(--acento-texto);
   background:rgba(var(--acento-rgb),0.07);
 }
 
-.btn-sm{ padding:8px 16px; font-size:0.66rem; }
+.btn-sm{ padding:8px 16px; font-size:0.8rem; }
 .btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:34px; }
 
 
@@ -467,14 +525,15 @@ img{ max-width:100%; display:block; }
 }
 .filtros-grupo{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
 .filtros-titulo{
-  font-size:0.62rem;
-  letter-spacing:0.22em;
+  font-size:0.8rem;
+  letter-spacing:0.16em;
   color:var(--marfil-tenue);
   width:70px;
+  font-weight:500;
 }
 .filter-btn{
   padding:7px 16px;
-  font-size:0.64rem;
+  font-size:0.8rem;
   letter-spacing:0.14em;
   background:transparent;
   border:1px solid var(--borde);
@@ -482,12 +541,13 @@ img{ max-width:100%; display:block; }
   color:var(--marfil-tenue);
   cursor:pointer;
   transition:color .18s, border-color .18s, background .18s;
+  font-weight:500;
 }
 .filter-btn:hover{ border-color:var(--acento); color:var(--marfil); }
 .filter-btn.active{
   background:rgba(var(--acento-rgb),0.14);
   border-color:var(--acento);
-  color:var(--acento);
+  color:var(--acento-texto);
 }
 
 /* El filo de arriba lleva el color de la RAREZA, que se
@@ -526,28 +586,32 @@ img{ max-width:100%; display:block; }
   width:100%;
   height:100%;
   object-fit:cover;
+  /* Las ilustraciones son 16:9 con el objeto a la izquierda. La
+     ficha es 4:3: se recorta de la derecha, no del objeto. */
+  object-position:18% center;
   display:block;
+  transition:transform .5s cubic-bezier(.2,.8,.2,1);
 }
 .item-categoria{
   display:flex;
   justify-content:space-between;
   gap:10px;
   font-family:var(--fuente-titulo);
-  font-size:0.68rem;
-  letter-spacing:0.2em;
+  font-size:0.8rem;
+  letter-spacing:0.14em;
   text-transform:uppercase;
-  color:var(--acento);
+  color:var(--acento-texto);
+  font-weight:500;
 }
 /* El nombre de la rareza, a la derecha y en su color */
 .item-categoria small{
   font-size:inherit;
   letter-spacing:inherit;
-  color:var(--rareza, var(--marfil-tenue));
+  color:color-mix(in srgb, var(--rareza, var(--marfil-tenue)) 56%, var(--marfil));
 }
 
-/* El sello heraldico, encima de la imagen. Lo dibuja
-   EmblemaCategoria en SVG: ver ese archivo para saber por
-   que no basta con la foto. */
+/* El sello heraldico de EmblemaCategoria. Hoy lo usan las
+   tarjetas de categoria; las de producto llevan su ilustracion. */
 .item-thumb{ position:relative; }
 .emblema{
   position:absolute;
@@ -557,14 +621,13 @@ img{ max-width:100%; display:block; }
   filter:drop-shadow(0 2px 6px rgba(0,0,0,0.85));
   opacity:.95;
 }
-/* La imagen se atenua para que el sello se lea encima */
-.item-thumb img{ opacity:.45; }
-.item-card:hover .item-thumb img{ opacity:.6; }
+/* Al pasar el raton, la ilustracion se acerca un poco */
+.item-card:hover .item-thumb img{ transform:scale(1.05); }
 .item-name{ font-size:1.05rem; margin:0; }
 .item-card a:hover .item-name{ color:var(--oro-claro); }
 .item-meta{
   display:flex; justify-content:space-between;
-  font-size:0.78rem;
+  font-size:0.88rem;
   color:var(--marfil-tenue);
 }
 .item-price{
@@ -615,18 +678,19 @@ img{ max-width:100%; display:block; }
 .form-logo-sub{
   margin:8px 0 0;
   font-family:var(--fuente-titulo);
-  font-size:0.62rem;
-  letter-spacing:0.28em;
+  font-size:0.8rem;
+  letter-spacing:0.2em;
   text-transform:uppercase;
-  color:var(--acento);
+  color:var(--acento-texto);
 }
 
 .field{ margin-bottom:22px; }
 .form-label{
-  font-size:0.64rem;
+  font-size:0.82rem;
   letter-spacing:0.18em;
   color:var(--marfil-tenue);
   margin-bottom:9px;
+  font-weight:500;
 }
 .form-label .req{ color:var(--acento); }
 
@@ -640,7 +704,7 @@ img{ max-width:100%; display:block; }
   font-family:var(--fuente-texto);
   font-size:0.98rem;
 }
-.form-control::placeholder{ color:rgba(164,152,119,0.6); }
+.form-control::placeholder{ color:rgba(194,181,146,0.75); }
 .form-control:focus, .form-select:focus{
   background-color:var(--hierro-oscuro);
   border-color:var(--acento);
@@ -667,7 +731,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   margin-top:7px;
   font-family:var(--fuente-texto);
   font-style:italic;
-  font-size:0.8rem;
+  font-size:0.86rem;
   color:var(--marfil-tenue);
 }
 
@@ -716,9 +780,10 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   padding:15px 18px;
   background:rgba(11,13,12,0.5);
   border-bottom:1px solid var(--borde);
-  font-size:0.68rem;
+  font-size:0.8rem;
   color:var(--marfil-tenue);
   white-space:nowrap;
+  font-weight:500;
 }
 .table > tbody td{ padding:15px 18px; border-bottom-style:dotted; vertical-align:middle; }
 .table > tbody tr:last-child td{ border-bottom:none; }
@@ -742,8 +807,9 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .kpi .l{
   display:block;
   margin-top:8px;
-  font-size:0.68rem;
+  font-size:0.8rem;
   color:var(--marfil-tenue);
+  font-weight:500;
 }
 
 /* Etiqueta de estado, sobre el Badge de Bootstrap */
@@ -753,8 +819,8 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   border-radius:var(--radio);
   background:transparent !important;
   font-family:var(--fuente-titulo);
-  font-size:0.68rem;
-  font-weight:400;
+  font-size:0.8rem;
+  font-weight:500;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
@@ -770,7 +836,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .admin-layout{
   min-height:100vh;
   display:grid;
-  grid-template-columns:260px 1fr;
+  grid-template-columns:276px 1fr;   /* con iconos, 260 partia "Volver a la tienda" */
 }
 .rail{
   display:flex; flex-direction:column;
@@ -788,60 +854,69 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .rail-mark{
   margin:0;
   font-family:var(--fuente-titulo);
-  font-size:0.68rem;
-  letter-spacing:0.26em;
+  font-size:0.8rem;
+  letter-spacing:0.18em;
   text-transform:uppercase;
-  color:var(--acento);
+  color:var(--acento-texto);
+  font-weight:500;
 }
 .rail-brand h1{ font-size:1.1rem; margin:12px 0 6px; }
 .rail-brand h1::after{ content:none; }
 .rail-brand .sub{
   margin:0;
   font-style:italic;
-  font-size:0.78rem;
+  font-size:0.84rem;
   color:var(--marfil-tenue);
 }
 
 /* Enlaces del menu lateral. El rombo sustituye a los iconos. */
 .navitem{
   position:relative;
-  display:block;
-  padding:11px 12px 11px 26px;
+  display:flex; align-items:center; gap:12px;
+  padding:11px 12px;
   border-radius:var(--radio);
   background:none;
   border:none;
   width:100%;
   text-align:left;
   color:var(--marfil-tenue);
-  font-size:0.66rem;
-  transition:background .18s, color .18s;
+  font-size:0.82rem;
+  transition:background .18s, color .18s, box-shadow .18s;
+  font-weight:500;
 }
-.navitem::before{
-  content:"";
-  position:absolute;
-  left:10px; top:50%;
-  width:5px; height:5px;
-  margin-top:-3px;
-  background:var(--acento);
-  transform:rotate(45deg);
-  opacity:0;
-  transition:opacity .18s;
+.navitem-icono{
+  width:18px; height:18px;
+  flex-shrink:0;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:.8;
+  transition:opacity .18s, transform .18s;
 }
 .navitem:hover{ background:rgba(var(--acento-rgb),0.09); color:var(--marfil); }
+.navitem:hover .navitem-icono{ opacity:1; transform:translateX(2px); }
+/* El activo se marca con una barra del acento a la izquierda */
 .navitem.active{
-  background:rgba(var(--acento-rgb),0.14);
-  color:var(--acento);
+  background:color-mix(in srgb, var(--acento) 15%, transparent);
+  color:var(--acento-texto);
+  box-shadow:inset 3px 0 0 var(--acento);
 }
-.navitem.active::before{ opacity:1; }
+.navitem.active .navitem-icono{ opacity:1; }
 
 .rail-group{
-  margin:18px 0 6px;
+  display:flex; align-items:center; gap:10px;
+  margin:20px 0 6px;
   padding:0 12px;
-  font-size:0.68rem;
-  letter-spacing:0.24em;
+  font-size:0.8rem;
+  letter-spacing:0.16em;
   color:var(--marfil-tenue);
-  opacity:.65;
+  font-weight:500;
 }
+/* Antes iba con opacidad .65 y casi no se leia: ahora el grupo se
+   separa con una linea, no apagando el texto. */
+.rail-group::after{ content:""; flex:1; height:1px; background:var(--borde); }
 .rail-foot{
   margin-top:auto;
   padding-top:16px;
@@ -851,13 +926,13 @@ textarea.form-control{ min-height:132px; resize:vertical; }
 .rail-usuario-nombre{
   display:block;
   font-family:var(--fuente-titulo);
-  font-size:0.74rem;
+  font-size:0.86rem;
   color:var(--marfil);
 }
 .rail-usuario-rol{
   display:block;
   margin-top:4px;
-  font-size:0.72rem;
+  font-size:0.8rem;
   font-style:italic;
   color:var(--marfil-tenue);
 }
@@ -911,7 +986,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   background:linear-gradient(180deg, transparent, rgba(41,43,40,0.6));
   border-top:1px solid var(--borde);
   color:var(--marfil-tenue);
-  font-size:0.64rem;
+  font-size:0.84rem;
 }
 .foot-marca{
   display:block;
@@ -944,13 +1019,19 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   .foot-links{ justify-content:flex-end; }
 }
 
-@media (max-width:991.98px){
+/* La barra se pliega en menu bajo 1200 px y no bajo 992: con la
+   letra al tamano actual, entre 992 y 1199 no cabia en una fila
+   y el carrito saltaba a la siguiente. (Navbar.jsx: expand="xl") */
+@media (max-width:1199.98px){
   .site-nav > .container-xxl{ min-height:64px; flex-wrap:wrap; }
   .navbar-collapse{ padding:18px 0 10px; }
   .navbar-nav{ gap:0; margin-bottom:18px; }
   .site-nav .nav-link{ padding:11px 0; }
   .site-nav .nav-link.active::after{ left:0; right:auto; width:26px; }
   .nav-acciones{ gap:14px; }
+}
+
+@media (max-width:991.98px){
   .cinta-sub{ width:100%; }
 
   /* El menu lateral del panel pasa a ser un cajon (Offcanvas) */
@@ -990,10 +1071,43 @@ textarea.form-control{ min-height:132px; resize:vertical; }
    o el cargo del mercader.
    ========================================================= */
 .nav-usuario{ gap:9px; line-height:1.2; }
+
+/* El menu de la cuenta. Bootstrap lo trae blanco: con sus propias
+   variables toma el hierro de las tarjetas y el borde de oro. */
+.nav-cuenta .dropdown-toggle{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 0;
+  color:var(--marfil);
+}
+.nav-cuenta .dropdown-toggle::after{ border-top-color:var(--acento-texto); }
+.nav-cuenta .dropdown-menu{
+  --bs-dropdown-bg:var(--hierro);
+  --bs-dropdown-border-color:var(--borde-fuerte);
+  --bs-dropdown-link-color:var(--marfil);
+  --bs-dropdown-link-hover-color:var(--oro-claro);
+  --bs-dropdown-link-hover-bg:rgba(var(--acento-rgb),0.12);
+  --bs-dropdown-link-active-color:var(--obsidiana);
+  --bs-dropdown-link-active-bg:var(--oro-claro);
+  --bs-dropdown-divider-bg:var(--borde);
+  --bs-dropdown-header-color:var(--marfil-tenue);
+  min-width:210px;
+  margin-top:10px;
+  box-shadow:var(--sombra);
+}
+.nav-cuenta .dropdown-item{
+  font-family:var(--fuente-titulo);
+  font-size:0.82rem;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:12px 18px;   /* 44px de alto: se toca bien con el dedo */
+}
+.nav-cuenta .dropdown-header{ font-size:0.86rem; padding:10px 18px 6px; }
 .nav-usuario small{
-  font-size:0.68rem;
+  font-size:0.8rem;
   letter-spacing:0.16em;
-  color:var(--acento);
+  color:var(--acento-texto);
+  font-weight:500;
 }
 
 
@@ -1022,7 +1136,7 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   font-family:var(--fuente-titulo);
   font-size:0.86rem;
   letter-spacing:0.16em;
-  color:var(--acento);
+  color:var(--acento-texto);
 }
 .pedido-fecha{
   display:block;
@@ -1046,10 +1160,11 @@ textarea.form-control{ min-height:132px; resize:vertical; }
   padding:14px 24px;
   border-top:1px solid var(--borde);
   font-family:var(--fuente-titulo);
-  font-size:0.68rem;
+  font-size:0.8rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--marfil-tenue);
+  font-weight:500;
 }
 
 /* Las cifras van a la derecha para poder compararlas */
@@ -1103,117 +1218,212 @@ textarea.form-control{ min-height:132px; resize:vertical; }
      3. prefers-reduced-motion -> quien desactivo las
         animaciones en su sistema no ve nada en movimiento
 
-   Y una cuarta, de criterio: en el panel NO hay ambiente. Ahi
-   se trabaja con tablas, no se contempla el paisaje.
+   En el panel tambien hay ambiente, pero mas tenue: ahi se
+   trabaja con tablas.
+
+   COMO SE MUEVE SIN SALTOS
+   Cada capa se desplaza exactamente --tile px por vuelta, y
+   todos los periodos de sus puntos dividen a --tile: el final
+   es identico al principio y el bucle no se nota. La capa de
+   atras lleva puntos chicos y va lenta; la de adelante, puntos
+   con halo y mas rapida.
    ========================================================= */
 
+/* --- La luz de la region (el <div class="aurora"> de index.html) --- */
+.aurora{
+  position:fixed;
+  inset:-25%;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(38% 32% at 22% 18%, color-mix(in srgb, var(--acento) 24%, transparent), transparent 72%),
+    radial-gradient(32% 28% at 80% 80%, color-mix(in srgb, var(--acento) 15%, transparent), transparent 72%);
+  animation:aurora 22s ease-in-out infinite alternate;
+}
+@keyframes aurora{
+  from{ transform:translate3d(-5%, -4%, 0) scale(1); }
+  to  { transform:translate3d(6%, 5%, 0) scale(1.12); }
+}
+
+/* --- Las dos capas de particulas --- */
 body::before,
 body::after{
   content:"";
   position:fixed;
-  inset:-20% 0 -20% 0;
+  inset:calc(var(--tile) * -1);
   pointer-events:none;
   z-index:-1;
   opacity:0;                      /* apagado salvo donde se encienda */
-  transition:opacity .6s;
+  /* Cada punto se repite con su propio periodo (la lista se
+     recicla). Los tres dividen a --tile, asi que el bucle sigue
+     sin salto; pero el dibujo entero solo se repite cada 660 px
+     y ya no se ve una cuadricula de puntos alineados. */
+  background-size:660px 660px, 330px 330px, 660px 660px, 220px 220px;
+  transition:opacity .8s;
+  animation:var(--rumbo, caer) var(--ritmo, 40s) linear infinite;
+  --tile:660px;
 }
 
-/* Las dos capas van a distinta velocidad: la de atras mas
-   lenta, para dar sensacion de profundidad. */
-body::before{ animation:ambiente-lento 90s linear infinite; }
-body::after { animation:ambiente-rapido 55s linear infinite; }
+@keyframes caer   { to{ transform:translate3d(0, var(--tile), 0); } }
+@keyframes subir  { to{ transform:translate3d(0, calc(var(--tile) * -1), 0); } }
+@keyframes derivar{ to{ transform:translate3d(var(--tile), calc(var(--tile) * -1), 0); } }
+@keyframes vagar  { to{ transform:translate3d(calc(var(--tile) * -1), 0, 0); } }
+@keyframes titilar{ from{ opacity:.4; } to{ opacity:1; } }
 
-@keyframes ambiente-lento {
-  from{ transform:translate3d(0, 0, 0); }
-  to  { transform:translate3d(-40px, 22%, 0); }
-}
-@keyframes ambiente-rapido {
-  from{ transform:translate3d(0, 0, 0); }
-  to  { transform:translate3d(30px, -22%, 0); }
-}
-
-/* --- Rivendel: estrellas quietas que titilan --- */
+/* --- Rivendel: estrellas que titilan y derivan --- */
 .region-rivendel::before{
-  opacity:.5;
+  opacity:.9; --rumbo:vagar; --ritmo:240s;
   background-image:
-    radial-gradient(1.4px 1.4px at 18% 22%, rgba(195,203,204,0.9), transparent),
-    radial-gradient(1.2px 1.2px at 63% 14%, rgba(159,184,208,0.8), transparent),
-    radial-gradient(1.6px 1.6px at 81% 44%, rgba(232,217,181,0.7), transparent),
-    radial-gradient(1.1px 1.1px at 34% 67%, rgba(195,203,204,0.7), transparent),
-    radial-gradient(1.3px 1.3px at 91% 78%, rgba(159,184,208,0.6), transparent);
-  background-size:520px 520px;
-  animation:titilar 7s ease-in-out infinite alternate;
+    radial-gradient(circle at 12% 18%, rgba(195,203,204,.95), transparent 1.8px),
+    radial-gradient(circle at 37% 62%, rgba(159,184,208,.9),  transparent 1.6px),
+    radial-gradient(circle at 58% 9%,  rgba(232,217,181,.85), transparent 1.7px),
+    radial-gradient(circle at 74% 41%, rgba(195,203,204,.9),  transparent 1.5px),
+    radial-gradient(circle at 89% 83%, rgba(159,184,208,.85), transparent 1.8px),
+    radial-gradient(circle at 23% 91%, rgba(232,217,181,.8),  transparent 1.4px),
+    radial-gradient(circle at 66% 75%, rgba(195,203,204,.75), transparent 1.3px);
 }
-@keyframes titilar { from{ opacity:.28; } to{ opacity:.55; } }
+.region-rivendel::after{
+  --rumbo:vagar; --ritmo:200s;
+  background-image:
+    radial-gradient(circle at 30% 30%, rgba(214,228,240,1), rgba(159,184,208,.35) 1.6px, transparent 4.5px),
+    radial-gradient(circle at 78% 58%, rgba(232,217,181,1), rgba(232,217,181,.3) 1.4px, transparent 4px),
+    radial-gradient(circle at 52% 88%, rgba(195,203,204,1), rgba(195,203,204,.3) 1.2px, transparent 3.5px);
+  animation:vagar 200s linear infinite, titilar 3.2s ease-in-out infinite alternate;
+}
 
 /* --- Erebor: chispas de forja que suben --- */
+.region-erebor::before{
+  opacity:.85; --rumbo:subir; --ritmo:51s;
+  background-image:
+    radial-gradient(circle at 14% 72%, rgba(242,154,36,.9),  transparent 1.8px),
+    radial-gradient(circle at 41% 33%, rgba(229,196,90,.85), transparent 1.6px),
+    radial-gradient(circle at 63% 88%, rgba(216,90,22,.85),  transparent 1.9px),
+    radial-gradient(circle at 82% 21%, rgba(242,154,36,.8),  transparent 1.5px),
+    radial-gradient(circle at 29% 6%,  rgba(229,196,90,.75), transparent 1.4px),
+    radial-gradient(circle at 92% 57%, rgba(216,90,22,.8),   transparent 1.7px);
+}
 .region-erebor::after{
-  opacity:.4;
+  opacity:.95; --rumbo:subir; --ritmo:35s;
   background-image:
-    radial-gradient(1.8px 1.8px at 24% 80%, rgba(229,196,90,0.95), transparent),
-    radial-gradient(1.4px 1.4px at 58% 92%, rgba(201,162,39,0.85), transparent),
-    radial-gradient(2px 2px at 86% 70%, rgba(242,154,36,0.7), transparent);
-  background-size:420px 420px;
+    radial-gradient(circle at 22% 40%, rgba(255,214,120,1), rgba(242,154,36,.4) 1.8px, transparent 5px),
+    radial-gradient(circle at 67% 75%, rgba(255,190,90,1),  rgba(216,90,22,.4) 1.6px,  transparent 4.5px),
+    radial-gradient(circle at 85% 12%, rgba(255,226,150,1), rgba(229,196,90,.35) 1.4px, transparent 4px);
 }
 
-/* --- Moria: polvo que cae en la oscuridad --- */
-.region-moria::before{
-  opacity:.45;
-  background-image:
-    radial-gradient(1.5px 1.5px at 30% 10%, rgba(159,184,208,0.75), transparent),
-    radial-gradient(1.2px 1.2px at 70% 30%, rgba(195,203,204,0.6), transparent),
-    radial-gradient(1.8px 1.8px at 12% 60%, rgba(159,184,208,0.5), transparent);
-  background-size:380px 380px;
-  animation:caer 40s linear infinite;
-}
-@keyframes caer {
-  from{ transform:translate3d(0, -20%, 0); }
-  to  { transform:translate3d(-20px, 20%, 0); }
-}
-
-/* --- Lothlorien: motas doradas flotando --- */
-.region-lothlorien::after{
-  opacity:.45;
-  background-image:
-    radial-gradient(2.2px 2.2px at 20% 40%, rgba(242,154,36,0.8), transparent),
-    radial-gradient(1.6px 1.6px at 64% 20%, rgba(229,196,90,0.7), transparent),
-    radial-gradient(1.9px 1.9px at 88% 62%, rgba(242,154,36,0.55), transparent);
-  background-size:460px 460px;
-}
-
-/* --- Bree: lluvia fina en el camino --- */
+/* --- Bree: llovizna en el camino --- */
 .region-bree::before{
-  opacity:.3;
+  opacity:.5; --rumbo:caer; --ritmo:10.5s;
   background-image:
-    radial-gradient(1.2px 1.2px at 25% 15%, rgba(229,196,90,0.6), transparent),
-    radial-gradient(1px 1px at 75% 50%, rgba(232,217,181,0.5), transparent);
-  background-size:340px 340px;
-  animation:caer 26s linear infinite;
+    radial-gradient(0.8px 7px at 11% 14%, rgba(205,215,220,.7), transparent),
+    radial-gradient(0.8px 6px at 36% 58%, rgba(205,215,220,.6), transparent),
+    radial-gradient(0.8px 8px at 57% 27%, rgba(232,217,181,.55), transparent),
+    radial-gradient(0.8px 6px at 78% 71%, rgba(205,215,220,.6), transparent),
+    radial-gradient(0.8px 7px at 93% 39%, rgba(205,215,220,.55), transparent);
+}
+.region-bree::after{
+  opacity:.55; --rumbo:caer; --ritmo:8s;
+  background-image:
+    radial-gradient(1px 10px at 24% 33%, rgba(220,228,232,.75), transparent),
+    radial-gradient(1px 9px at 63% 81%, rgba(229,196,90,.55), transparent),
+    radial-gradient(1px 10px at 86% 18%, rgba(220,228,232,.65), transparent);
 }
 
-/* --- La Comarca: polen en el aire --- */
+/* --- La Comarca: luciernagas que suben con el viento --- */
+.region-comarca::before{
+  opacity:.8; --rumbo:derivar; --ritmo:105s;
+  background-image:
+    radial-gradient(circle at 18% 64%, rgba(120,190,120,.9), transparent 1.8px),
+    radial-gradient(circle at 46% 21%, rgba(232,217,181,.8), transparent 1.5px),
+    radial-gradient(circle at 71% 49%, rgba(120,190,120,.85), transparent 1.7px),
+    radial-gradient(circle at 88% 86%, rgba(229,196,90,.8),  transparent 1.6px),
+    radial-gradient(circle at 33% 92%, rgba(120,190,120,.75), transparent 1.4px);
+}
 .region-comarca::after{
-  opacity:.35;
+  --rumbo:derivar; --ritmo:90s;
   background-image:
-    radial-gradient(2px 2px at 35% 55%, rgba(63,140,94,0.7), transparent),
-    radial-gradient(1.5px 1.5px at 78% 28%, rgba(232,217,181,0.5), transparent);
-  background-size:500px 500px;
+    radial-gradient(circle at 27% 37%, rgba(214,240,160,1), rgba(120,190,120,.4) 1.8px, transparent 5px),
+    radial-gradient(circle at 74% 70%, rgba(240,226,140,1), rgba(229,196,90,.35) 1.6px, transparent 4.5px);
+  animation:derivar 90s linear infinite, titilar 2.6s ease-in-out infinite alternate;
 }
 
-/* --- Orthanc: ceniza. Solo fuera del panel --- */
-.region-orthanc:not(:has(.admin-layout))::before{
-  opacity:.4;
+/* --- Minas Tirith: motas de luz blanca que suben --- */
+.region-minas-tirith::before{
+  opacity:.8; --rumbo:subir; --ritmo:90s;
   background-image:
-    radial-gradient(1.8px 1.8px at 22% 18%, rgba(196,71,47,0.6), transparent),
-    radial-gradient(1.4px 1.4px at 68% 48%, rgba(164,152,119,0.5), transparent);
-  background-size:400px 400px;
-  animation:caer 34s linear infinite;
+    radial-gradient(circle at 16% 28%, rgba(236,240,240,.9),  transparent 1.6px),
+    radial-gradient(circle at 44% 77%, rgba(195,203,204,.85), transparent 1.8px),
+    radial-gradient(circle at 69% 12%, rgba(232,217,181,.8),  transparent 1.5px),
+    radial-gradient(circle at 87% 54%, rgba(236,240,240,.85), transparent 1.7px),
+    radial-gradient(circle at 31% 52%, rgba(195,203,204,.7),  transparent 1.3px);
 }
+.region-minas-tirith::after{
+  opacity:.9; --rumbo:subir; --ritmo:78s;
+  background-image:
+    radial-gradient(circle at 25% 45%, rgba(255,255,255,1), rgba(195,203,204,.35) 1.6px, transparent 4.5px),
+    radial-gradient(circle at 72% 82%, rgba(240,232,210,1), rgba(232,217,181,.3) 1.4px,  transparent 4px);
+}
+
+/* --- Moria: polvo de mithril que cae en la oscuridad --- */
+.region-moria::before{
+  opacity:.75; --rumbo:caer; --ritmo:82s;
+  background-image:
+    radial-gradient(circle at 13% 22%, rgba(159,184,208,.85), transparent 1.6px),
+    radial-gradient(circle at 39% 68%, rgba(195,203,204,.7),  transparent 1.4px),
+    radial-gradient(circle at 61% 34%, rgba(159,184,208,.8),  transparent 1.8px),
+    radial-gradient(circle at 84% 79%, rgba(195,203,204,.7),  transparent 1.5px),
+    radial-gradient(circle at 92% 8%,  rgba(159,184,208,.75), transparent 1.3px);
+}
+.region-moria::after{
+  opacity:.85; --rumbo:caer; --ritmo:70s;
+  background-image:
+    radial-gradient(circle at 28% 55%, rgba(200,222,240,1), rgba(159,184,208,.35) 1.5px, transparent 4.5px),
+    radial-gradient(circle at 76% 18%, rgba(210,220,225,1), rgba(195,203,204,.3) 1.3px,  transparent 4px);
+}
+
+/* --- Orthanc: ceniza y brasas que caen --- */
+.region-orthanc::before{
+  opacity:.75; --rumbo:caer; --ritmo:60s;
+  background-image:
+    radial-gradient(circle at 17% 31%, rgba(196,71,47,.85),   transparent 1.8px),
+    radial-gradient(circle at 43% 74%, rgba(164,152,119,.7),  transparent 1.5px),
+    radial-gradient(circle at 66% 16%, rgba(217,131,115,.8),  transparent 1.6px),
+    radial-gradient(circle at 88% 62%, rgba(164,152,119,.65), transparent 1.4px),
+    radial-gradient(circle at 34% 94%, rgba(196,71,47,.75),   transparent 1.7px);
+}
+.region-orthanc::after{
+  opacity:.85; --rumbo:caer; --ritmo:52s;
+  background-image:
+    radial-gradient(circle at 26% 42%, rgba(255,150,110,1), rgba(196,71,47,.4) 1.6px, transparent 4.5px),
+    radial-gradient(circle at 71% 79%, rgba(240,180,150,1), rgba(217,131,115,.35) 1.4px, transparent 4px);
+}
+/* En el panel, la misma ceniza pero tenue: ahi se trabaja */
+.region-orthanc:has(.admin-layout)::before{ opacity:.35; }
+.region-orthanc:has(.admin-layout)::after { opacity:.4; }
+.region-orthanc:has(.admin-layout) .aurora{ opacity:.6; }
+
+/* --- Al cambiar de pagina: la cinta entra y el contenido sube --- */
+main > *{ animation:pagina-entra .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes pagina-entra{ from{ opacity:0; transform:translateY(12px); } }
+
+.cinta-region{ animation:cinta-entra .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes cinta-entra{ from{ opacity:0; transform:translateY(-6px); } }
+.cinta-nombre{ animation:cinta-nombre .9s .05s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes cinta-nombre{ from{ opacity:0; letter-spacing:.55em; } }
+.cinta-nombre::before{ animation:rombo-gira .9s .1s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes rombo-gira{
+  from{ transform:rotate(-135deg) scale(0); }
+  to  { transform:rotate(45deg) scale(1); }
+}
+.cinta-sub{ animation:cinta-sub .8s .25s ease both; }
+@keyframes cinta-sub{ from{ opacity:0; transform:translateX(-10px); } }
 
 /* Quien desactivo las animaciones en su sistema ve el fondo
    quieto, sin una sola particula en movimiento. */
 @media (prefers-reduced-motion: reduce){
-  body::before, body::after{ animation:none !important; }
+  body::before, body::after, .aurora,
+  main > *, .cinta-region, .cinta-nombre, .cinta-nombre::before, .cinta-sub,
+  .sello-interior{ animation:none !important; }
+  body{ transition:none; }
 }
 
 
@@ -1234,7 +1444,7 @@ body::after { animation:ambiente-rapido 55s linear infinite; }
   top:10px; right:10px;
   padding:3px 9px;
   font-family:var(--fuente-titulo);
-  font-size:.78rem;
+  font-size:0.82rem;
   font-weight:600;
   letter-spacing:.04em;
   color:var(--obsidiana);

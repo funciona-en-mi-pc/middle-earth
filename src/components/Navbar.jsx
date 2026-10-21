@@ -1,10 +1,11 @@
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import NavbarBs from 'react-bootstrap/Navbar'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import NavDropdown from 'react-bootstrap/NavDropdown'
+import { Link, NavLink } from 'react-router-dom'
 
-import logo from '../assets/img/logo.png'
-import { useAuth } from '../context/useAuth.js'
+import Sello from './Sello.jsx'
+import { useAuth, useSalir } from '../context/useAuth.js'
 import { cantidadItemsCarrito } from '../services/ventaService.js'
 
 /* =========================================================
@@ -41,29 +42,24 @@ import { cantidadItemsCarrito } from '../services/ventaService.js'
    ========================================================= */
 
 function Navbar() {
-  const { usuario, logout } = useAuth()
-  const navigate = useNavigate()
+  const { usuario } = useAuth()
+  const salir = useSalir()
 
   const enCarrito = usuario?.tipo === 'JUGADOR' ? cantidadItemsCarrito(usuario.id) : 0
 
-  const salir = () => {
-    logout()
-    navigate('/')
-  }
-
   return (
-    <NavbarBs expand="lg" className="site-nav sticky-top">
+    <NavbarBs expand="xl" className="site-nav sticky-top">
       <Container fluid="xxl" className="px-3 px-lg-4">
 
         <NavbarBs.Brand as={Link} to="/" className="marca">
-          <img className="marca-sello" src={logo} alt="Sello de Middle Earth" width="30" height="30" />
+          <Sello className="marca-sello" />
           <span className="marca-texto">Middle Earth</span>
         </NavbarBs.Brand>
 
         <NavbarBs.Toggle aria-controls="menu-principal" aria-label="Abrir menu" />
 
         <NavbarBs.Collapse id="menu-principal">
-          <Nav className="mx-lg-auto">
+          <Nav className="mx-xl-auto">
             <Nav.Link as={NavLink} to="/" end>Inicio</Nav.Link>
             <Nav.Link as={NavLink} to="/catalogo">Mercado</Nav.Link>
             <Nav.Link as={NavLink} to="/categorias">Categorias</Nav.Link>
@@ -79,29 +75,37 @@ function Navbar() {
               </>
             )}
 
+            {/* Las acciones de la cuenta van en un desplegable bajo el
+                nombre: con cinco enlaces sueltos la barra no cabia en
+                una linea y el carrito saltaba a la siguiente. */}
             {usuario && (
-              <>
-                {/* title= deja ver el correo al pasar el raton */}
-                <span className="nav-usuario" title={usuario.email}>
-                  <span className="nav-usuario-marca">
-                    <span>{usuario.nombre.charAt(0).toUpperCase()}</span>
+              <NavDropdown
+                id="menu-cuenta"
+                className="nav-cuenta"
+                align="end"
+                title={
+                  <span className="nav-usuario">
+                    <span className="nav-usuario-marca" aria-hidden="true">
+                      <span>{usuario.nombre.charAt(0).toUpperCase()}</span>
+                    </span>
+                    {usuario.nombre}
+                    <small>
+                      {usuario.tipo === 'JUGADOR' ? `Nivel ${usuario.nivel}` : usuario.cargo}
+                    </small>
                   </span>
-                  {usuario.nombre}
-                  <small>
-                    {usuario.tipo === 'JUGADOR' ? `Nivel ${usuario.nivel}` : usuario.cargo}
-                  </small>
-                </span>
-
+                }
+              >
+                {/* El correo va aqui y no como title del nombre: dentro
+                    del boton, el lector de pantalla lo leia en lugar
+                    del nombre. */}
+                <NavDropdown.Header>{usuario.email}</NavDropdown.Header>
                 {usuario.tipo === 'MERCADER'
-                  ? <NavLink className="nav-sesion" to="/admin">Panel</NavLink>
-                  : <NavLink className="nav-sesion" to="/mis-pedidos">Mis pedidos</NavLink>}
-
-                <NavLink className="nav-sesion" to="/perfil">Perfil</NavLink>
-
-                <button type="button" className="nav-sesion" onClick={salir}>
-                  Cerrar sesion
-                </button>
-              </>
+                  ? <NavDropdown.Item as={NavLink} to="/admin">Panel</NavDropdown.Item>
+                  : <NavDropdown.Item as={NavLink} to="/mis-pedidos">Mis pedidos</NavDropdown.Item>}
+                <NavDropdown.Item as={NavLink} to="/perfil">Perfil</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item as="button" onClick={salir}>Cerrar sesion</NavDropdown.Item>
+              </NavDropdown>
             )}
 
             {/* Solo los jugadores compran */}
